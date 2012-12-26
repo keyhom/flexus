@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+   PureArt Archetype. Make any work easier. 
+ 
+   Copyright (C) 2011  pureart.org 
+ 
+   This program is free software: you can redistribute it and/or modify 
+   it under the terms of the GNU General Public License as published by 
+   the Free Software Foundation, either version 3 of the License, or 
+   (at your option) any later version. 
+ 
+   This program is distributed in the hope that it will be useful, 
+   but WITHOUT ANY WARRANTY; without even the implied warranty of 
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+   GNU General Public License for more details. 
+ 
+   You should have received a copy of the GNU General Public License 
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+
+-->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:login="flexus.dgms.login.*"
+			   xmlns:view="flexus.dgms.login.view.*"
+			   creationComplete="readyHandler(event)"
+			   preinitialize="preparingHandler(event)"
+			   frameRate="64"
+			   currentState="login"
+			   creationPolicy="auto"
+			   xmlns:model="flexus.dgms.globals.model.*"
+			   xmlns:codec="flexus.dgms.protocol.codec.*"
+			   xmlns:socket="flexus.socket.*"
+			   xmlns:message="flexus.dgms.message.*">
+	<fx:Declarations>
+		<message:McService id="client" />
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import flexus.dgms.login.controls.events.LoginEvent;
+			import flexus.dgms.message.McIoMessage;
+			import flexus.io.ByteBuffer;
+			import flexus.logging.LoggerFactory;
+			import flexus.message.IoMessageEvent;
+			import flexus.message.IoMessageInfo;
+			import flexus.socket.InetSocketAddress;
+			import flexus.inject.IInjector;
+			import flexus.inject.InjectionGlobals;
+			import flexus.inject.AbstractConfiguration;
+			import flexus.inject.IConfiguration;
+			import flexus.dgms.DesktopConfiguration;
+			import flexus.mvc.facades.ContextFacade;
+			import flexus.dgms.utils.Utils;
+
+			import mx.collections.IList;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.logging.ILogger;
+
+			//--------------------------------------------------------------------------
+			//
+			//  Class properties 
+			//
+			//--------------------------------------------------------------------------
+			//----------------------------------
+			// LOGGER 
+			//----------------------------------
+
+			static private const LOGGER:ILogger = LoggerFactory.getLogger(Loading);
+
+			//--------------------------------------------------------------------------
+			//
+			//  Properties 
+			//
+			//--------------------------------------------------------------------------
+			//----------------------------------
+			// _authronized 
+			//----------------------------------
+			
+			private var injector:IInjector;
+
+			//----------------------------------
+			// _authronized 
+			//----------------------------------
+
+			[Bindable]
+			private var _authronized:Boolean = false;
+
+			//----------------------------------
+			// apIndex 
+			//----------------------------------
+
+			[Bindable]
+			private var apIndex:int = 0;
+
+			//----------------------------------
+			// apList 
+			//----------------------------------
+
+			[Bindable]
+			private var apList:IList;
+
+			private var sessionId:String;
+
+			//--------------------------------------------------------------------------
+			//
+			//  Methods 
+			//
+			//--------------------------------------------------------------------------
+
+			protected function loginSubmitHandler(event:LoginEvent):void
+			{
+				var info:IoMessageInfo = client.bind(0x09, McIoMessage);
+
+				info.addEventListener(IoMessageEvent.MESSAGE_SENT, function(e:IoMessageEvent):void
+				{
+					var lc:LoginContainer = event.currentTarget as LoginContainer;
+					var buf:ByteBuffer = e.buffer;
+					buf.put(true);
+					buf.putPrefixString(lc.userName, 4);
+					buf.putPrefixString(lc.passWord, 4);
+				}, false, 0, true);
+
+				client.send(info);
+				cursorManager.setBusyCursor();
+			}
+
+			private function messageRecievedHandler(event:IoMessageEvent):void
+			{
+				var buf:ByteBuffer = event.buffer;
+
+				if (buf.getBoolean())
+				{
+					sessionId = buf.getPrefixString(4);
+					_authronized = true;
+					invalidateProperties();
+				}
+				else
+				{
+					var errorMsg:String = buf.getPrefixString(4);
+					_authronized = false;
+					invalidateProperties();
+					client.close();
+					Alert.show(errorMsg, "ERROR", Alert.OK);
+				}
+
+				cursorManager.removeBusyCursor();
+			}
+
+			private function preparingHandler(event:FlexEvent):void
+			{
+				// Retrieves the Access-Point list from the remote site.
+				var url:String = FlexGlobals.topLevelApplication.url;
+				var index:int = url.lastIndexOf('/');
+				var webRoot:String = url.substring(0, index + 1);
+
+				var request:URLRequest = new URLRequest('aplist');
+				request.method = URLRequestMethod.POST;
+				var loader:URLLoader = new URLLoader();
+				var handler:Function;
+				loader.addEventListener(Event.COMPLETE, handler = function(e:Event):void
+				{
+					loader.removeEventListener(Event.COMPLETE, handler);
+
+					if (loader.data)
+					{
+						var result:XML = XML(loader.data);
+
+						if (result)
+						{
+							apList = new XMLListCollection(result..ap);
+						}
+					}
+				});
+
+				loader.load(request);
+			}
+
+			private function readyHandler(event:FlexEvent):void
+			{
+				LOGGER.info("Application ready...");
+				// add listen to remote packets.
+				var entries:Object = Utils.getCurrentURLEntries();
+				client.remoteAddress = new InetSocketAddress(entries.host, 9999);
+
+				var info:IoMessageInfo = client.bind(0x09, McIoMessage);
+				info.addEventListener(IoMessageEvent.MESSAGE_RECIEVED, messageRecievedHandler);
+				client.listen(info);
+
+				this.addEventListener("logout", logoutHandler);
+
+				// initialize the desktop mediator here.
+				var configs:Vector.<IConfiguration> = new Vector.<IConfiguration>();
+				configs.push(new DesktopConfiguration());
+
+				injector = InjectionGlobals.getOrCreateInjector(configs);
+				injector.injectInstance(this);
+				trace("Injected facade ...", facade);
+			}
+
+			[Inject]
+			public var facade:ContextFacade;
+
+			override protected function commitProperties():void
+			{
+				super.commitProperties();
+
+				if (_authronized)
+				{
+					currentState = "normal";
+					startPingRequest();
+				}
+				else
+				{
+					stopPingRequest();
+					client.close();
+					currentState = "login";
+				}
+			}
+
+			private function logoutHandler(event:Event):void
+			{
+				_authronized = false;
+				invalidateProperties();
+			}
+
+			private var _pingTimer:Timer;
+
+			private function startPingRequest():void
+			{
+				stopPingRequest();
+
+				_pingTimer = new Timer(60 * 1000);
+				_pingTimer.addEventListener(TimerEvent.TIMER, function(te:TimerEvent):void
+				{
+					var info:IoMessageInfo = client.bind(0x10, McIoMessage);
+					info.addEventListener(IoMessageEvent.MESSAGE_SENT, function(e:IoMessageEvent):void
+					{
+						var buf:ByteBuffer = e.buffer;
+						buf.putLong(new Date().valueOf());
+					});
+					client.send(info);
+				});
+				_pingTimer.start();
+			}
+
+			private function stopPingRequest():void
+			{
+				if (_pingTimer)
+					_pingTimer.stop();
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Style source="style.css" />
+
+	<s:states>
+		<s:State name="login" />
+		<s:State name="normal" />
+	</s:states>
+
+	<s:layout>
+		<s:BasicLayout />
+	</s:layout>
+
+	<!-- background -->
+	<s:Group left="-5"
+			 right="-5"
+			 top="-5"
+			 bottom="-5">
+		<s:BitmapImage source="asserts/images/bg.jpg"
+					   width="100%"
+					   height="100%"
+					   fillMode="scale"
+					   smooth="true">
+			<s:filters>
+				<s:BlurFilter blurX="1"
+							  blurX.login="4"
+							  blurY="1"
+							  blurY.login="4"
+							  quality="2" />
+			</s:filters>
+		</s:BitmapImage>
+		<s:Rect includeIn="login"
+				width="100%"
+				height="100%">
+			<s:fill>
+				<s:SolidColor color="0x000000"
+							  alpha="0.5" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+
+	<view:LoginContainer id="loginContainer"
+						 loginSubmit="loginSubmitHandler(event)"
+						 includeIn="login"
+						 width="100%"
+						 height="100%"
+						 apList="{apList}"
+						 apIndex="{apIndex}"
+						 userName="jeremy"
+						 passWord="123123" />
+
+	<mx:ModuleLoader includeIn="normal"
+					 url="Desktop.swf"
+					 left="0"
+					 right="0"
+					 top="0"
+					 bottom="0" />
+
+</s:Application>

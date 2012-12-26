@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+   PureArt Archetype. Make any work easier. 
+ 
+   Copyright (C) 2011  pureart.org 
+ 
+   This program is free software: you can redistribute it and/or modify 
+   it under the terms of the GNU General Public License as published by 
+   the Free Software Foundation, either version 3 of the License, or 
+   (at your option) any later version. 
+ 
+   This program is distributed in the hope that it will be useful, 
+   but WITHOUT ANY WARRANTY; without even the implied warranty of 
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+   GNU General Public License for more details. 
+ 
+   You should have received a copy of the GNU General Public License 
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+
+-->
+
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   layout="absolute"
+		   width="100%"
+		   height="100%"
+		   xmlns:message="flexus.dgms.message.*"
+		   xmlns:containers="flexus.mdi.containers.*"
+		   xmlns:context="flexus.context.*"
+		   xmlns:handlers="flexus.dgms.desktop.handlers.*">
+	<fx:Declarations>
+		<message:McService id="client"
+						   useWeakContext="true" />
+		<context:Context id="context">
+			<context:handlers>
+				<fx:Array>
+					<handlers:DesktopDefaultHandler context="{context}" />
+					<handlers:DesktopCommandHandler context="{context}" />
+					<handlers:DesktopWorkspaceHandler context="{context}" />
+				</fx:Array>
+			</context:handlers>
+		</context:Context>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.IList;
+
+			//----------------------------------
+			// currentTime 
+			//----------------------------------
+
+			[Bindable]
+			public var currentTime:String;
+
+			//----------------------------------
+			// startMenus 
+			//----------------------------------
+
+			private var _startMenus:IList;
+
+			[Bindable]
+			public function get startMenus():IList
+			{
+				return _startMenus;
+			}
+
+			public function set startMenus(value:IList):void
+			{
+				_startMenus = value;
+			}
+
+			//----------------------------------
+			// _starterIndex 
+			//----------------------------------
+
+			[Bindable]
+			private var _starterIndex:int = -1;
+
+			//--------------------------------------------------------------------------
+			//
+			//  Methods 
+			//
+			//--------------------------------------------------------------------------
+
+			public function invalidateStarterIndex():void
+			{
+				_starterIndex = -1;
+			}
+		]]>
+	</fx:Script>
+
+	<s:Group left="0"
+			 top="27"
+			 bottom="0"
+			 width="72">
+		<s:List selectedIndex="@{_starterIndex}"
+				useHandCursor="true"
+				useVirtualLayout="true"
+				focusEnabled="false"
+				width="73"
+				height="100%"
+				left="-1"
+				top="-1"
+				bottom="-1"
+				skinClass="skins.blackCool.DesktopStartBarListSkin"
+				dataProvider="{startMenus}"
+				id="workspaceList"
+				labelField="name">
+		</s:List>
+	</s:Group>
+
+	<s:Group y="-1"
+			 left="0"
+			 right="0"
+			 height="28">
+		<s:Rect left="-1"
+				right="-1"
+				top="-1"
+				bottom="0">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry color="0x555555" />
+					<s:GradientEntry color="0x111111"
+									 ratio="0.9" />
+				</s:LinearGradient>
+			</s:fill>
+			<s:filters>
+				<s:GlowFilter color="0x000000"
+							  alpha="0.65"
+							  blurX="16"
+							  blurY="16"
+							  strength="2"
+							  inner="false" />
+			</s:filters>
+		</s:Rect>
+
+		<mx:LinkButton label="开始"
+					   color="0xFFFFFF"
+					   fontWeight="bold"
+					   left="5"
+					   verticalCenter="0" />
+
+		<s:Label verticalCenter="0"
+				 text="Flexus Demo, Oh, my cloud lady..."
+				 horizontalCenter="0"
+				 color="0xFF6600">
+			<s:filters>
+				<s:GlowFilter color="0x000000"
+							  blurX="4"
+							  blurY="4"
+							  strength="2" />
+			</s:filters>
+		</s:Label>
+
+		<s:HGroup verticalCenter="0"
+				  verticalAlign="middle"
+				  gap="10"
+				  right="5">
+
+			<!-- Time ticker -->
+			<s:Label text="{currentTime}"
+					 color="0xFFFFFF" />
+
+			<s:Label text="jeremy"
+					 fontWeight="bold"
+					 color="0xFFFFFF">
+				<s:filters>
+					<s:GlowFilter alpha="1"
+								  blurX="3"
+								  blurY="3"
+								  color="0x000000"
+								  inner="false"
+								  knockout="false"
+								  strength="2" />
+				</s:filters>
+			</s:Label>
+
+			<s:Button id="btnLogout"
+					  label="注销" />
+		</s:HGroup>
+	</s:Group>
+
+	<containers:MDIGroup id="mdiGroup"
+						 left="72"
+						 top="27"
+						 right="0"
+						 bottom="0">
+	</containers:MDIGroup>
+</mx:Module>

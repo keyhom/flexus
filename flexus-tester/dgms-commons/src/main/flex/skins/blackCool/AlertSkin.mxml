@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+ADOBE SYSTEMS INCORPORATED
+Copyright 2008 Adobe Systems Incorporated
+All Rights Reserved.
+
+NOTICE: Adobe permits you to use, modify, and distribute this file
+in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for a Spark Panel container.
+
+	@see spark.components.Panel
+
+	@langversion 3.0
+	@playerversion Flash 10
+	@playerversion AIR 1.5
+	@productversion Flex 4
+-->
+<s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009"
+			 xmlns:s="library://ns.adobe.com/flex/spark"
+			 xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+			 blendMode="normal"
+			 mouseEnabled="false"
+			 minWidth="131"
+			 minHeight="127"
+			 alpha.disabled="0.5"
+			 alpha.disabledWithControlBar="0.5"
+			 implements="mx.core.IRectangularBorder"
+			 >
+
+	<fx:Script fb:purpose="styling"
+			   >
+		<![CDATA[
+			import mx.core.EdgeMetrics;
+			import mx.core.IUIComponent;
+
+
+			static private const exclusions:Array = ["background", "titleDisplay", "contentGroup", "controlBarGroup"];
+
+			/**
+			 * @private
+			 */
+			override public function get colorizeExclusions():Array
+			{
+				return exclusions;
+			}
+
+			/**
+			 * @private
+			 */
+			override protected function initializationComplete():void
+			{
+//				useChromeColor = true;
+				super.initializationComplete();
+				setStyle("cornerRadius", 8);
+				setStyle('color', 0xFF6600);
+			}
+
+			/**
+			 * @private
+			 */
+			override protected function updateDisplayList(unscaledWidth:Number,
+														  unscaledHeight:Number):void
+			{
+				if (getStyle("borderVisible") == true)
+				{
+					border.visible = true;
+					background.left = background.top = background.right = background.
+						bottom = 1;
+					contents.left = contents.top = contents.right = contents.
+						bottom = 1;
+				}
+				else
+				{
+					border.visible = false;
+					background.left = background.top = background.right = background.
+						bottom = 0;
+					contents.left = contents.top = contents.right = contents.
+						bottom = 0;
+				}
+
+//				dropShadow.visible = getStyle("dropShadowVisible");
+
+				var cr:Number = getStyle("cornerRadius");
+//				var withControls:Boolean = (currentState == "disabledWithControlBar" ||
+//					currentState == "normalWithControlBar");
+				var withControls:Boolean = true;
+
+				if (cornerRadius != cr)
+				{
+					cornerRadius = cr;
+
+//					dropShadow.tlRadius = cornerRadius;
+//					dropShadow.trRadius = cornerRadius;
+//					dropShadow.blRadius = withControls ? cornerRadius : 0;
+//					dropShadow.brRadius = withControls ? cornerRadius : 0;
+
+					setPartCornerRadii(topMaskRect, withControls);
+					setPartCornerRadii(border, withControls);
+					setPartCornerRadii(background, withControls);
+				}
+
+				if (bottomMaskRect)
+					setPartCornerRadii(bottomMaskRect, withControls);
+
+//				borderStroke.color = getStyle("borderColor");
+//				borderStroke.alpha = getStyle("borderAlpha");
+//				backgroundFill.color = getStyle("backgroundColor");
+//				backgroundFill.alpha = getStyle("backgroundAlpha");
+
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+			}
+
+			/**
+			 * @private
+			 */
+			private function setPartCornerRadii(target:Rect, includeBottom:Boolean):void
+			{
+				target.topLeftRadiusX = cornerRadius;
+				target.topRightRadiusX = cornerRadius;
+				target.bottomLeftRadiusX = includeBottom ? cornerRadius : 0;
+				target.bottomRightRadiusX = includeBottom ? cornerRadius : 0;
+			}
+
+			private var cornerRadius:Number;
+
+			private var _metrics:EdgeMetrics = new EdgeMetrics(1, 32, 1, 1);
+
+			public function get borderMetrics():EdgeMetrics
+			{
+				var hasPanelParent:Boolean = isPanel(parent);
+				var controlBar:IUIComponent = hasPanelParent ? Object(parent).
+					mx_internal::_controlBar : null;
+
+				if (controlBar && controlBar.includeInLayout)
+				{
+					_metrics.bottom = controlBar.getExplicitOrMeasuredHeight() +
+						1;
+				}
+				else
+				{
+					_metrics.bottom = 1;
+				}
+				return _metrics;
+			}
+
+			public function get backgroundImageBounds():Rectangle
+			{
+				return null;
+			}
+
+			public function set backgroundImageBounds(value:Rectangle):void
+			{
+			}
+
+			public function get hasBackgroundImage():Boolean
+			{
+				return false;
+			}
+
+			public function layoutBackgroundImage():void
+			{
+			}
+
+			private static var panels:Object = {};
+
+			private static function isPanel(parent:Object):Boolean
+			{
+				var s:String = getQualifiedClassName(parent);
+
+				if (panels[s] == 1)
+				{
+					return true;
+				}
+
+				if (panels[s] == 0)
+				{
+					return false;
+				}
+
+				if (s == "mx.containers::Panel")
+				{
+					panels[s] == 1;
+					return true;
+				}
+
+				var x:XML = describeType(parent);
+				var xmllist:XMLList = x.extendsClass.(@type == "mx.containers::Panel");
+
+				if (xmllist.length() == 0)
+				{
+					panels[s] = 0;
+					return false;
+				}
+				panels[s] = 1;
+				return true;
+			}
+		]]>
+	</fx:Script>
+
+	<s:states>
+		<s:State name="normal"
+				 />
+		<s:State name="disabled"
+				 />
+		<s:State name="normalWithControlBar"
+				 stateGroups="withControls"
+				 />
+		<s:State name="disabledWithControlBar"
+				 stateGroups="withControls"
+				 />
+	</s:states>
+
+	<!-- drop shadow can't be hittable so all other graphics go in this group -->
+	<s:Group left="0"
+			 right="0"
+			 top="0"
+			 bottom="0"
+			 >
+
+		<!-- top group mask -->
+
+		<!--- @private -->
+		<s:Group left="1"
+				 top="1"
+				 right="1"
+				 bottom="1"
+				 id="topGroupMask"
+				 >
+
+			<!--- @private -->
+			<s:Rect id="topMaskRect"
+					left="0"
+					top="0"
+					right="0"
+					bottom="0"
+					>
+				<s:fill>
+					<s:SolidColor alpha="0"
+								  />
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+
+		<!-- bottom group mask -->
+
+		<!--- @private -->
+		<s:Group left="1"
+				 top="1"
+				 right="1"
+				 bottom="1"
+				 id="bottomGroupMask"
+				 includeIn="normalWithControlBar, disabledWithControlBar"
+				 >
+
+			<!--- @private -->
+			<s:Rect id="bottomMaskRect"
+					left="0"
+					top="0"
+					right="0"
+					bottom="0"
+					>
+				<s:fill>
+					<s:SolidColor alpha="0"
+								  />
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+
+		<!-- layer 1: border -->
+
+		<!--- @private -->
+		<s:Rect id="border"
+				left="0"
+				right="0"
+				top="0"
+				bottom="0"
+				>
+			<s:stroke>
+
+				<!--- @private -->
+				<s:SolidColorStroke id="borderStroke"
+									weight="1"
+									/>
+			</s:stroke>
+		</s:Rect>
+
+		<!-- layer 2: background fill -->
+
+		<!--- Defines the appearance of the PanelSkin class's background. -->
+		<s:Rect id="background"
+				left="1"
+				top="1"
+				right="1"
+				bottom="1"
+				>
+			<s:fill>
+
+				<!--- @private
+					  Defines the  PanelSkin class's background fill. The default color is 0xFFFFFF. -->
+				<s:SolidColor id="backgroundFill"
+							  color="#222222"
+							  alpha="0.8"
+							  />
+			</s:fill>
+			<s:filters>
+				<s:GlowFilter blurX="12"
+							  blurY="12"
+							  alpha="1"
+							  color="0x000000"
+							  inner="false"
+							  knockout="false"
+							  strength="2"
+							  />
+				<s:GlowFilter blurX="3"
+							  blurY="3"
+							  alpha="1"
+							  color="0x555555"
+							  inner="true"
+							  knockout="false"
+							  strength="1"
+							  />
+			</s:filters>
+		</s:Rect>
+
+		<!-- layer 3: contents -->
+
+		<!--- Contains the vertical stack of titlebar content and controlbar. -->
+		<s:Group left="1"
+				 right="1"
+				 top="1"
+				 bottom="1"
+				 id="contents"
+				 >
+			<s:layout>
+				<s:VerticalLayout gap="0"
+								  horizontalAlign="justify"
+								  />
+			</s:layout>
+
+			<!--- @private -->
+			<s:Group id="topGroup"
+					 mask="{topGroupMask}"
+					 >
+
+				<!--- @copy spark.components.Panel#titleDisplay -->
+				<s:Label id="titleDisplay"
+						 maxDisplayedLines="1"
+						 left="9"
+						 right="3"
+						 top="1"
+						 bottom="0"
+						 minHeight="30"
+						 verticalAlign="middle"
+						 textAlign="start"
+						 fontWeight="bold"
+						 >
+				</s:Label>
+			</s:Group>
+
+			<!--
+				Note: setting the minimum size to 0 here so that changes to the host component's
+				size will not be thwarted by this skin part's minimum size.   This is a compromise,
+				more about it here: http://bugs.adobe.com/jira/browse/SDK-21143
+			-->
+
+			<!--- @copy spark.components.SkinnableContainer#contentGroup -->
+			<s:Group id="contentGroup"
+					 width="100%"
+					 height="100%"
+					 minWidth="0"
+					 minHeight="0"
+					 >
+			</s:Group>
+
+			<!--- @private -->
+			<s:Group id="bottomGroup"
+					 minWidth="0"
+					 minHeight="0"
+					 includeIn="normalWithControlBar, disabledWithControlBar"
+					 >
+
+				<s:Group left="0"
+						 right="0"
+						 top="0"
+						 bottom="0"
+						 mask="{bottomGroupMask}"
+						 >
+
+					<!-- layer 0: control bar divider line -->
+					<s:Rect left="0"
+							right="0"
+							top="0"
+							height="1"
+							alpha="0.22"
+							>
+						<s:fill>
+							<s:SolidColor color="0x000000"
+										  />
+						</s:fill>
+					</s:Rect>
+
+					<!-- layer 1: control bar highlight -->
+					<s:Rect left="0"
+							right="0"
+							top="1"
+							bottom="0"
+							>
+						<s:stroke>
+							<s:LinearGradientStroke rotation="90"
+													weight="1"
+													>
+								<s:GradientEntry color="0xE5E5E5"
+												 />
+								<s:GradientEntry color="0xD8D8D8"
+												 />
+							</s:LinearGradientStroke>
+						</s:stroke>
+					</s:Rect>
+
+					<!-- layer 2: control bar fill -->
+					<s:Rect left="1"
+							right="1"
+							top="2"
+							bottom="1"
+							>
+						<s:fill>
+							<s:LinearGradient rotation="90"
+											  >
+								<s:GradientEntry color="0xDADADA"
+												 />
+								<s:GradientEntry color="0xC5C5C5"
+												 />
+							</s:LinearGradient>
+						</s:fill>
+					</s:Rect>
+				</s:Group>
+
+				<!-- layer 3: control bar -->
+
+				<!--- @copy spark.components.Panel#controlBarGroup -->
+				<s:Group id="controlBarGroup"
+						 left="0"
+						 right="0"
+						 top="1"
+						 bottom="1"
+						 minWidth="0"
+						 minHeight="0"
+						 >
+					<s:layout>
+						<s:HorizontalLayout paddingLeft="10"
+											paddingRight="10"
+											paddingTop="7"
+											paddingBottom="7"
+											gap="10"
+											/>
+					</s:layout>
+				</s:Group>
+			</s:Group>
+		</s:Group>
+	</s:Group>
+</s:SparkSkin>

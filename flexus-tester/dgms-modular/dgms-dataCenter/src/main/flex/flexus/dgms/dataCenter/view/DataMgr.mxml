@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					label="数据管理"
+					height="100%"
+					width="100%">
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<mx:HDividedBox height="100%"
+					resizeToContent="false">
+		<mx:Tree labelField="@label"
+				 minWidth="150"
+				 height="100%">
+			<mx:dataProvider>
+				<s:XMLListCollection>
+					<fx:XMLList xmlns="">
+						<node label="示例" />
+					</fx:XMLList>
+				</s:XMLListCollection>
+			</mx:dataProvider>
+		</mx:Tree>
+		<s:Group>
+			<s:Label text="HELLO" />
+		</s:Group>
+	</mx:HDividedBox>
+
+</s:NavigatorContent>

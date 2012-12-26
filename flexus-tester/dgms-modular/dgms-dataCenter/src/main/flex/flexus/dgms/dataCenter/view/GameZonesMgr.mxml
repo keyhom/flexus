@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="100%"
+					height="100%"
+					label="游戏区管理"
+					xmlns:trees="flexus.components.trees.*"
+					creationComplete="navigatorcontent1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import flexus.inject.IConfiguration;
+			import flexus.inject.IInjector;
+			import flexus.inject.InjectionGlobals;
+			
+			import mx.events.FlexEvent;
+			import mx.logging.ILogger;
+			import flexus.logging.LoggerFactory;
+
+			static private const LOGGER:ILogger = LoggerFactory.getLogger(TestConfiguration);
+			
+			protected function navigatorcontent1_creationCompleteHandler(event:FlexEvent):void
+			{
+				//var configs:Vector.<IConfiguration> = new Vector.<IConfiguration>;
+				//var injector:IInjector = InjectionGlobals.getOrCreateInjector(configs);
+				//injector.injectInstance(this, ApplicationDomain.currentDomain);
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<mx:HDividedBox width="100%"
+					height="100%">
+		<s:Panel minWidth="200"
+				 height="100%">
+			<trees:MultiTree left="-1"
+							 right="-1"
+							 top="-1"
+							 bottom="-1">
+			</trees:MultiTree>
+		</s:Panel>
+		<s:Panel height="100%"
+				 width="100%">
+			<mx:DataGrid left="-1"
+						 right="-1"
+						 top="-1"
+						 bottom="-1">
+
+			</mx:DataGrid>
+		</s:Panel>
+	</mx:HDividedBox>
+
+</s:NavigatorContent>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					label="模板管理"
+					height="100%"
+					width="100%">
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		
+	</fx:Style>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.IList;
+
+			[Bindable]
+			private var templateName:String;
+
+			[Bindable]
+			private var templateValue:String;
+
+			[Bindable]
+			private var inputWidth:Number = 250;
+
+			private var _selectedItem:Object;
+
+			[Bindable]
+			private function get selectedItem():Object
+			{
+				return _selectedItem;
+			}
+
+			private function set selectedItem(value:Object):void
+			{
+				_selectedItem = value;
+
+				if (value is XML)
+					selectedEntries = new XMLListCollection(XML(value).children());
+				else
+					selectedEntries = new ArrayCollection(value.children);
+			}
+
+			[Bindable]
+			private var selectedEntries:IList;
+		]]>
+	</fx:Script>
+
+	<mx:HDividedBox width="100%"
+					height="100%">
+		<s:Panel minWidth="150"
+				 height="100%"
+				 dropShadowVisible="false"
+				 title="模板条目">
+			<mx:Tree labelField="@templateName"
+					 left="-1"
+					 top="-1"
+					 bottom="-1"
+					 right="-1"
+					 selectedItem="@{selectedItem}">
+				<mx:dataProvider>
+					<s:XMLListCollection>
+						<fx:XMLList xmlns="">
+							<template templateName="/"
+									  templateId="1">
+								<template templateId="10"
+										  templateName="用户"
+										  templateValue="1" />
+								<template templateId="11"
+										  templateName="权限"
+										  templateValue="2" />
+								<template templateId="12"
+										  templateName="角色"
+										  templateValue="3" />
+							</template>
+						</fx:XMLList>
+					</s:XMLListCollection>
+				</mx:dataProvider>
+			</mx:Tree>
+		</s:Panel>
+		<s:Panel title="控制面板"
+				 height="100%"
+				 controlBarVisible="true"
+				 dropShadowVisible="false">
+			<s:controlBarContent>
+				<s:Button label="Handle"/>
+			</s:controlBarContent>
+			<mx:DataGrid top="-1"
+						 left="-1"
+						 bottom="-1"
+						 right="-1"
+						 dataProvider="{selectedEntries}">
+				<mx:columns>
+					<mx:DataGridColumn dataField="@templateId"
+									   headerText="模板ID" />
+					<mx:DataGridColumn dataField="@templateName"
+									   headerText="模板名称" />
+					<mx:DataGridColumn dataField="@templateValue"
+									   headerText="值" />
+					<mx:DataGridColumn dataField="@templateCatalog"
+									   headerText="模板分类" />
+					<mx:DataGridColumn dataField="@templateDescription"
+									   headerText="模板说明" />
+				</mx:columns>
+			</mx:DataGrid>
+		</s:Panel>
+	</mx:HDividedBox>
+
+</s:NavigatorContent>
