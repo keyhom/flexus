@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<access-points>
+	<ap id="1" name="自动选择" address="*"
+		comment="Auto sign in with a smart selection." />
+	<ap id="2" name="马来西亚 - MyCNX" address="112.137.170.206:9999"
+		comment="Sign in to the MyCNX access point." />
+	<ap id="3" name="内网 - 7road" address="192.168.0.28:9999"
+		comment="Sign in to the native-route access point." />
+	<ap id="4" name="国内 - China" address="*"
+		comment="Sign in to the china access point." />
+</access-points>

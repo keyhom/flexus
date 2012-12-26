@@ -1,0 +1,21 @@
+# Eclipse configuration file.
+.settings/
+.project
+.classpath
+
+# FlashBuilder configuration file.
+bin-debug/
+.actionScriptProperties
+.flexLibProperties
+.flexConfig.xml
+
+# Maven configuration file.
+target/
+
+# Intellij idea configuration file.
+.idea/
+*.ips
+*.iws
+
+# Specific filters.
+

@@ -1,0 +1,60 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+* {
+	font-family: 微软雅黑,'WenQuanYi Micro Hei',"Ubuntu Beta",UbuntuBeta,Ubuntu,"Bitstream Vera Sans",
+		"DejaVu Sans",Tahoma,sans-serif,Helvetica,Arial,
+		'Liberation Sans',FreeSans,sans-serif;
+	font-size: 12px;
+}
+
+global {
+	modalTransparencyBlur: 0;
+	modalTransparency: 0.6;
+	modalTransparencyColor: black;
+	modalTransparencyDuration: 200;
+}
+
+mx|ToolTip
+{
+	font-size: 12px;
+	color: #FFFFFF;
+	background-color: #000000;
+	background-alpha: 0.8;
+	border-style: solid;
+	border-visible: true;
+	border-color: #FFFFFF;
+	border-alpha: 1;
+	corner-radius: 6;
+}
+
+mx|Alert {
+	border-skin: ClassReference("skins.blackCool.AlertSkin");
+	color: #FFFFFF;
+}
+
+mx|DataGrid {
+	font-family: 微软雅黑;
+	font-size: 12;
+}
+
+s|TitleWindow {
+	skin-class: ClassReference("skins.blackCool.WindowSkin");
+	background-color: #999999;
+	content-background-color: #FFFFFF;
+}
+
+mx|TabNavigator {
+	padding-bottom: 5;
+	padding-left: 5;
+	padding-right: 5;
+	padding-top: 5;
+	drop-shadow-visible: false;
+}
+
+mx|Module {
+	padding-bottom: 5;
+	padding-left: 5;
+	padding-right: 5;
+	padding-top: 5;
+}

@@ -1,0 +1,7 @@
+# Log file ignore.
+*.log
+
+# web file ignore.
+src/main/webapp/rsl/
+src/main/webapp/*.swf
+

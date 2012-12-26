@@ -1,0 +1,158 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>flexus-tester</artifactId>
+		<groupId>org.pureart.flexus</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>flexus-dgms</artifactId>
+	<packaging>swf</packaging>
+	<name>Flexus DGMS</name>
+	<description>A test project of distributed game manager system.</description>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<finalName>Loading</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.pureart.maven.plugins</groupId>
+				<artifactId>flexworks-maven-plugin</artifactId>
+				<configuration>
+					<linkedResources>
+						<linkedResource>
+							<name>bin-debug</name>
+							<type>2</type>
+							<location>WEB_LOC/src/main/webapp</location>
+						</linkedResource>
+					</linkedResources>
+					<linkReportAttach>true</linkReportAttach>
+					<sourceFile>Loading.mxml</sourceFile>
+<!-- 					<modules> -->
+<!-- 						<module> -->
+<!-- 							<sourceFile>Desktop.mxml</sourceFile> -->
+<!-- 							<optimize>false</optimize> -->
+<!-- 							<finalName>Desktop</finalName> -->
+<!-- 						</module> -->
+<!-- 						<module> -->
+<!-- 							<sourceFile>SystemMgr.mxml</sourceFile> -->
+<!-- 							<optimize>false</optimize> -->
+<!-- 							<finalName>SystemMgr</finalName> -->
+<!-- 						</module> -->
+<!-- 					</modules> -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>textLayout</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>spark</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>sparkskins</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>charts</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>spark_dmv</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>mx</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>rpc</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>advancedgrids</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>${flex.sdk.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flex.sdk.groupId}</groupId>
+			<artifactId>spark</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>css</type>
+			<classifier>theme</classifier>
+			<scope>theme</scope>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>flexus-core</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>flexus-xwork</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>flexus-message</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>flexus-component</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>dgms-commons</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>${flexus.groupId}</groupId>
+			<artifactId>flexus-mvc</artifactId>
+			<version>${flexus.version}</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
+</project>

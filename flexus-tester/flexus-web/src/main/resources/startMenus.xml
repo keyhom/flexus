@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menus>
+	<item name="desktop" label="显示桌面" command="show desktop" />
+	<item name="dataCenter" label="数据中心" command="ropen datacenter" />
+	<item name="servers" label="服务器资源" command="ropen servers" />
+	<item name="gameMaster" label="游戏管理" command="ropen gamemaster" />
+	<item name="operationAnalysis" label="运营分析" command="ropen operationAnalysis" />
+	<item name="appliedMarket" label="应用中心" command="ropen appliedMarket" />
+	<item name="utilitiesMarket" label="工具中心" command="ropen utilitiesMarket" />
+	<item name="systemMaster" label="系统管理" command="ropen systemMaster" />
+</menus>
