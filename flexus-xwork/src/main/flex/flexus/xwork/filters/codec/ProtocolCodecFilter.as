@@ -22,6 +22,7 @@
 package flexus.xwork.filters.codec
 {
 
+import flash.errors.EOFError;
 import flash.utils.getQualifiedClassName;
 
 import flexus.core.xwork.XworkLogTarget;
@@ -165,6 +166,9 @@ public class ProtocolCodecFilter extends IoFilter
 			while (!bufferQueue.empty)
 			{
 				var encodedMessage:Object = bufferQueue.poll();
+				
+				if (!encodedMessage)
+					continue;
 
 				// Flush only when the buffer has remaining.
 				if (!(encodedMessage is ByteBuffer) || (ByteBuffer(encodedMessage)).
@@ -194,9 +198,9 @@ public class ProtocolCodecFilter extends IoFilter
 			return;
 		}
 
-		var in1:ByteBuffer = ByteBuffer(message);
-		var decoder:ProtocolDecoder = factory.getDecoder(session);
-		var decoderOut:ProtocolDecoderOutput = getDecoderOut(session, nextFilter);
+		const in1:ByteBuffer = ByteBuffer(message);
+		const decoder:ProtocolDecoder = factory.getDecoder(session);
+		const decoderOut:ProtocolDecoderOutput = getDecoderOut(session, nextFilter);
 
 		// Loop until we don't have anymore byte in the buffer,
 		// or until the decoder throws an unrecoverable exception or 
@@ -204,7 +208,7 @@ public class ProtocolCodecFilter extends IoFilter
 		// data in the buffer
 		while (in1.hasRemaining)
 		{
-			var oldPos:int = in1.position;
+			const oldPos:int = in1.position;
 
 			try
 			{
@@ -215,14 +219,29 @@ public class ProtocolCodecFilter extends IoFilter
 			}
 			catch (t:Error)
 			{
+				// log the buffer hex dump.
+				var curPos:int = in1.position;
+				in1.position = oldPos;
+				logger.error(in1.toString(Math.max(in1.remaining, 25)), t);
+				in1.position = curPos;
+				
 				// Fire the exceptionCaught event.
 				decoderOut.flush(nextFilter, session);
 				nextFilter.exceptionCaught(session, t);
-
-					// Retry only if the type of the caught exception is
-					// recoverable and the buffer position has changed.
-					// We check buffer position additionally to prevent an
-					// infinite loop.
+				
+				// Retry only if the type of the caught exception is
+				// recoverable and the buffer position has changed.
+				// We check buffer position additionally to prevent an
+				// infinite loop.
+				
+//				if (t is EOFError) {
+//					in1.position = oldPos;
+//					continue;
+//				}
+				
+				if (curPos == oldPos) {
+					break;
+				}
 			}
 		}
 	}

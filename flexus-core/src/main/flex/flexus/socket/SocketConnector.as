@@ -81,7 +81,7 @@ public class SocketConnector extends IoConnector
 
 	override protected function connect0(address:SocketAddress, connectFuture:Function):void
 	{
-		var socket:Socket = new Socket;
+		const socket:Socket = new Socket;
 		socket.addEventListener(Event.CONNECT, function(e:Event):void
 		{
 			// connected.
@@ -100,7 +100,7 @@ public class SocketConnector extends IoConnector
 														 session);
 				connectFuture.call(null, future);
 			}
-		});
+		}, false, 0, true);
 
 		socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorCaught);
 		socket.addEventListener(Event.CLOSE, processClosed);
@@ -112,20 +112,20 @@ public class SocketConnector extends IoConnector
 		socket.timeout = 15000;
 		socket.connect(address.host.toString(), address.port);
 	}
-
+	
 	private function processDataQueue(e:ProgressEvent):void
 	{
 		if (e && e.type == ProgressEvent.SOCKET_DATA)
 		{
-			var s:Socket = e.currentTarget as Socket;
+			const s:Socket = e.currentTarget as Socket;
 
 			if (s && (s in sessions) && s.bytesAvailable)
 			{
-				var buf:ByteBuffer = new ByteBuffer;
-				var bytes:uint = s.bytesAvailable;
+				const buf:ByteBuffer = new ByteBuffer;
+				
 				s.readBytes(buf.array);
 
-				if (bytes > 0)
+				if (buf.hasRemaining)
 				{
 					IoSession(sessions[s]).filterChain.fireMessageRecieved(buf);
 				}

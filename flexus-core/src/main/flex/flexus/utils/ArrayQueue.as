@@ -48,10 +48,9 @@ public class ArrayQueue implements IQueue
 	 *  @playerversion AIR 1.1
 	 *  @productversion Flex 3
 	 */
-	public function ArrayQueue(capacity:uint = 65535)
+	public function ArrayQueue(capacity:Number = Number.NaN)
 	{
 		super();
-		this._capacity = capacity;
 	}
 
 	//--------------------------------------------------------------------------
@@ -74,32 +73,14 @@ public class ArrayQueue implements IQueue
 	 */
 	public function get empty():Boolean
 	{
-		return _index == _tailIndex;
+		return _queue.length == 0;
 	}
-
-	//----------------------------------
-	// _capacity 
-	//----------------------------------
-
-	private var _capacity:uint;
-
-	//----------------------------------
-	// _index 
-	//----------------------------------
-
-	private var _index:int = 0;
 
 	//----------------------------------
 	// _queue 
 	//----------------------------------
 
 	private var _queue:Array = new Array;
-
-	//----------------------------------
-	// _tailIndex 
-	//----------------------------------
-
-	private var _tailIndex:int = 0;
 
 	//--------------------------------------------------------------------------
 	//
@@ -118,18 +99,7 @@ public class ArrayQueue implements IQueue
 	 */
 	public function offer(o:Object):void
 	{
-		if (_queue.length == _capacity)
-		{
-			// put the object to the first index.
-			_queue[0] = o;
-			_tailIndex = 0;
-		}
-		else
-		{
-			// default strategy.
-			_queue.push(o);
-			_tailIndex++;
-		}
+		_queue.push(o);
 	}
 
 	/**
@@ -143,14 +113,12 @@ public class ArrayQueue implements IQueue
 	 */
 	public function peek():Object
 	{
-		checkIndex();
-		return _queue[_index];
+		if (!empty)
+			return _queue[0];
+		return null;
 	}
 
 	/**
-	 *
-	 *  @return
-	 *
 	 *  @langversion 3.0
 	 *  @playerversion Flash 9
 	 *  @playerversion AIR 1.1
@@ -158,42 +126,17 @@ public class ArrayQueue implements IQueue
 	 */
 	public function poll():Object
 	{
-		checkIndex();
-		var o:Object = _queue[_index];
-		_queue[_index] = null;
-		_index++;
-		return o;
-	}
-
-	/**
-	 *
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	private function checkIndex():void
-	{
-		if (_index == _capacity)
-			_index = 0;
+		return _queue.shift();
 	}
 
 	public function get size():uint
 	{
-		if (_index <= _tailIndex)
-			return _tailIndex - _index;
-		else
-		{
-			return _capacity - _index + _tailIndex;
-		}
+		return _queue.length;
 	}
 
 	public function clear():void
 	{
-		_index = 0;
-		_tailIndex = 0;
-		_queue = [];
+		_queue = new Array;
 	}
 }
 }

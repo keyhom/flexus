@@ -22,6 +22,8 @@
 package flexus.message
 {
 
+import flash.events.Event;
+
 import flexus.core.xwork.filterChain.DefaultIoFilterChainBuilder;
 import flexus.core.xwork.future.FutureEvent;
 import flexus.core.xwork.service.IoConnector;
@@ -36,8 +38,6 @@ import flexus.utils.WeakReference;
 import flexus.xwork.filters.codec.ProtocolCodecFactory;
 import flexus.xwork.filters.codec.ProtocolCodecFilter;
 import flexus.xwork.filters.logging.LoggingFilter;
-
-import flash.events.Event;
 
 import mx.events.Request;
 import mx.logging.ILogger;
@@ -296,6 +296,13 @@ public class IoMessageClient extends IoHandler
 	{
 		_useWeakContext = value;
 	}
+	
+	/**
+	 * Determines if enable the logging writing.
+	 */
+	public function get enableLogging():Boolean {
+		return true;
+	}
 
 	//--------------------------------------------------------------------------
 	//
@@ -372,8 +379,10 @@ public class IoMessageClient extends IoHandler
 		// initialize.
 		if (!client)
 			client = new SocketConnector;
-		var chain:DefaultIoFilterChainBuilder = client.filterChain;
-		chain.addLast(LOGGING, new LoggingFilter);
+		
+		const chain:DefaultIoFilterChainBuilder = client.filterChain;
+		if (enableLogging)
+			chain.addLast(LOGGING, new LoggingFilter);
 
 		if (factory)
 			chain.addLast(PROTOCOL_CDEC, new ProtocolCodecFilter(factory));
@@ -385,13 +394,13 @@ public class IoMessageClient extends IoHandler
 
 	protected function messageRecievedHandler(e:IoServiceEvent):void
 	{
-		var req:Request = e.attachment as Request;
+		const req:Request = e.attachment as Request;
 
 		if (req && req.type == IoMessage.DECODE)
 		{
 			if (matcher)
 			{
-				var info:IoMessageInfo = matcher.match(req, infos);
+				const info:IoMessageInfo = matcher.match(req, infos);
 
 				if (info && info.message)
 				{

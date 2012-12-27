@@ -709,7 +709,7 @@ class TailFilter extends IoFilter
 	override public function exceptionCaught(nextFilter:NextFilter, session:IoSession,
 											 exception:Error):void
 	{
-		var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.EXCEPTION_CAUSED,
+		const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.EXCEPTION_CAUSED,
 													  session, exception);
 		session.handler.dispatchEvent(event);
 	}
@@ -728,7 +728,7 @@ class TailFilter extends IoFilter
 	override public function messageRecieved(nextFilter:NextFilter, session:IoSession,
 											 message:Object):void
 	{
-		var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_RECIEVED,
+		const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_RECIEVED,
 													  session, message);
 		session.handler.dispatchEvent(event);
 	}
@@ -736,7 +736,7 @@ class TailFilter extends IoFilter
 	override public function messageSent(nextFilter:NextFilter, session:IoSession,
 										 message:Object):void
 	{
-		var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_SENT,
+		const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_SENT,
 													  session, message);
 		session.handler.dispatchEvent(event);
 	}
@@ -745,7 +745,7 @@ class TailFilter extends IoFilter
 	{
 		try
 		{
-			var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_CLOSED,
+			const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_CLOSED,
 														  session);
 			session.handler.dispatchEvent(event);
 		}
@@ -764,7 +764,7 @@ class TailFilter extends IoFilter
 
 	override public function sessionCreated(nextFilter:NextFilter, session:IoSession):void
 	{
-		var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_CREATED,
+		const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_CREATED,
 													  session);
 		session.handler.dispatchEvent(event);
 	}
@@ -772,7 +772,7 @@ class TailFilter extends IoFilter
 	override public function sessionIdle(nextFilter:NextFilter, session:IoSession,
 										 status:int):void
 	{
-		var event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_IDLED,
+		const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.SESSION_IDLED,
 													  session, status);
 		session.handler.dispatchEvent(event);
 	}

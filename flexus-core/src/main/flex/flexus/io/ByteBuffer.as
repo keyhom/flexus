@@ -58,7 +58,7 @@ public class ByteBuffer
 	 */
 	static public function wrap(array:ByteArray):ByteBuffer
 	{
-		var buf:ByteBuffer = new ByteBuffer;
+		const buf:ByteBuffer = new ByteBuffer;
 		buf._array = array;
 		return buf;
 	}
@@ -292,6 +292,21 @@ public class ByteBuffer
 		_mark = -1;
 		return this;
 	}
+	
+	/**
+	 * Free the buffer.
+	 * <font color="red">
+	 * Makes sure don't doing any action after the <code>free</code> method was called.
+	 * </font>
+	 * 
+	 * @langversion 3.0
+	 * @playerversion Flash 9
+	 * @playerversion AIR 1.1
+	 * @productversion Flex 3
+	 */
+	public function free():void {
+		_array = null;
+	}
 
 	/**
 	 *
@@ -304,7 +319,7 @@ public class ByteBuffer
 	 */
 	public function compact():ByteBuffer
 	{
-		var bytes:ByteArray = new ByteArray;
+		const bytes:ByteArray = new ByteArray;
 		bytes.endian = array.endian;
 		bytes.writeBytes(array, position, remaining);
 		_array.clear();
@@ -852,9 +867,9 @@ public class ByteBuffer
 			array.writeBoolean(byte);
 		else if (byte is String)
 			array.writeUTFBytes(byte);
-		else if (byte is ByteBuffer)
-		{
-			put(ByteBuffer(byte).array);
+		else if (byte is ByteBuffer) {
+			const b:ByteBuffer = ByteBuffer(byte);
+			array.writeBytes(b.getBytes(b.remaining));
 		}
 		else if (byte is Object)
 			array.writeObject(byte);
@@ -1169,21 +1184,21 @@ public class ByteBuffer
 
 	public function slice():ByteBuffer
 	{
-		var b:ByteBuffer = new ByteBuffer;
-		var pos:uint = position;
+		const b:ByteBuffer = new ByteBuffer;
+		const pos:uint = position;
 		b.array.writeBytes(array, position, limit - position);
 		b.position = 0;
 		position = pos;
 		return b;
 	}
 
-	public function toString():String
+	public function toString(limit:uint = 25):String
 	{
 		return "ByteBuffer [pos=" + position + ", lim=" + limit + ", hexdump=" +
-			toHexString(array) + "]";
+			toHexString(array, limit) + "]";
 	}
 
-	static public function toHexString(bytes:ByteArray):String
+	static public function toHexString(bytes:ByteArray, limit:uint = 25):String
 	{
 		if (bytes)
 		{
@@ -1191,7 +1206,7 @@ public class ByteBuffer
 
 			var pos:uint = bytes.position;
 
-			var len:uint = Math.min(bytes.length, 25);
+			var len:uint = Math.min(bytes.length, limit);
 
 			for (var i:int = 0; i < len; i++)
 			{
@@ -1205,7 +1220,9 @@ public class ByteBuffer
 
 			bytes.position = pos;
 
-			s += ' ...';
+			if (len < bytes.length)
+				s += ' ...';
+			
 			return s;
 		}
 

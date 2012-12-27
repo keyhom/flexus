@@ -53,37 +53,49 @@ public class McProtocolCodecDecoder extends CumulativeProtocolDecoder
 		super();
 	}
 
-	override protected function doDecode(session:IoSession, inb:ByteBuffer, out:ProtocolDecoderOutput):Boolean
-	{
-		var size:int = inb.getIntAt(inb.position);
-
-		if (size == 0)
-		{
-			session.close();
-				// invalid packet length.
-		}
-
-		if(session.containsAttribute(Endian))
-		{
+	override protected function doDecode(session:IoSession, inb:ByteBuffer, out:ProtocolDecoderOutput):Boolean {
+		
+		if(session.containsAttribute(Endian)) {
 			var endian:String = session.getAttribute(Endian) as String;
-			if(endian)
-			{
+			if(endian) {
 				inb.order = endian;
 			}
 		}
+		
 
-		if (inb.hasRemaining && inb.remaining >= inb.getIntAt(inb.position))
-		{
+		var flag:Boolean = true;
+		var size:int = 0;
+		
+		// loop to decoded all of the supplied buffer util the buffer decline to continue.
+		while (inb.remaining >= 4 && inb.remaining >= inb.getIntAt(inb.position)) {
+			
 			size = inb.getIntAt(inb.position);
+			
+			if (size == 0) {
+				// something illegal bytes recieved. close the connection imme.
+				try {
+					session.close();
+					break;
+				} finally {
+					trace("Illegal packet size determined, closed the connection now.");
+				}
+			}
+			
 			var buf:ByteBuffer = inb.slice();
 			buf.order = inb.order;
 			inb.position += size;
 			
-			var req:Request = new Request(IoMessage.DECODE, false, false, buf);
+			try {
+				const req:Request = new Request(IoMessage.DECODE, false, false, buf);
+				out.write(req);
+			} catch (t:Error) {
+			}
 			
-			out.write(req);
-			return true;
+			flag = false;
 		}
+		
+		if (!flag)
+			return true;
 
 		return false;
 	}

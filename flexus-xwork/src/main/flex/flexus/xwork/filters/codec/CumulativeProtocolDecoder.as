@@ -89,7 +89,6 @@ public class CumulativeProtocolDecoder extends ProtocolDecoder
 		if (buf != null)
 		{
 			var appended:Boolean = false;
-
 			try
 			{
 				buf.put(in1);
@@ -99,24 +98,21 @@ public class CumulativeProtocolDecoder extends ProtocolDecoder
 			catch (e:Error)
 			{
 			}
-
-			if (appended)
-			{
+			
+			if (appended) {
 				buf.flip();
-			}
-			else
-			{
-				// Reallocate the buffer if append operation failed due to
-				// derivation or disabled auto-expansion.
+			} else {
+				// Reallocate the buffer if append operation failed due to 
+				// derivation or EOF, etc.
 				buf.flip();
-				var newBuf:ByteBuffer = new ByteBuffer;
+				const newBuf:ByteBuffer = new ByteBuffer();
 				newBuf.order = buf.order;
 				newBuf.put(buf);
 				newBuf.put(in1);
 				newBuf.flip();
 				buf = newBuf;
-
-				// Update the session attribute.
+				
+				// Update the session buffer.
 				session.setAttribute(BUFFER, buf);
 			}
 		}
@@ -126,10 +122,12 @@ public class CumulativeProtocolDecoder extends ProtocolDecoder
 			usingSessionBuffer = false;
 		}
 
-		for (; ; )
+		var decoded:Boolean = false;
+			
+		for (;;)
 		{
-			var oldPos:int = buf.position;
-			var decoded:Boolean = doDecode(session, buf, out);
+			const oldPos:int = buf.position;
+			decoded = doDecode(session, buf, out);
 
 			if (decoded)
 			{
@@ -211,7 +209,10 @@ public class CumulativeProtocolDecoder extends ProtocolDecoder
 	 */
 	private function removeSessionBuffer(session:IoSession):void
 	{
-		session.removeAttribute(BUFFER);
+		const buf:ByteBuffer = session.removeAttribute(BUFFER) as ByteBuffer;
+		if (buf) {
+			buf.clear();
+		}
 	}
 
 	/**
@@ -226,6 +227,7 @@ public class CumulativeProtocolDecoder extends ProtocolDecoder
 	 */
 	private function storeRemainingInSession(buf:ByteBuffer, session:IoSession):void
 	{
+		// compact the decoded part in buffer.
 		const remainingBuf:ByteBuffer = new ByteBuffer;
 		remainingBuf.order = buf.order;
 		remainingBuf.put(buf);

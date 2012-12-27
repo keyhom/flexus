@@ -22,10 +22,13 @@
 package flexus.message
 {
 
-import flash.events.EventDispatcher;
 import flash.errors.IllegalOperationError;
-import mx.events.Request;
+import flash.events.EventDispatcher;
+
 import flexus.io.ByteBuffer;
+
+import mx.core.EventPriority;
+import mx.events.Request;
 
 /**
  *  The event fired when the message being decoded.
@@ -113,9 +116,8 @@ public class IoMessage extends EventDispatcher
 
 	final protected function init():void
 	{
-		// TODO: initialize the event listeners.
-		this.addEventListener(DECODE, decodeHandler);
-		this.addEventListener(ENCODE, encodeHandler);
+		this.addEventListener(DECODE, decodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
+		this.addEventListener(ENCODE, encodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
 	}
 
 	/**

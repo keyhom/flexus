@@ -66,7 +66,7 @@ public class ProtocolDecoderOutput
 	// messageQueue 
 	//----------------------------------
 
-	private const _messageQueue:IQueue = new ArrayQueue();
+	private const _messageQueue:IQueue = new ArrayQueue(2 << 4);
 
 	/**
 	 *
