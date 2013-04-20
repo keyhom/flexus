@@ -1,8 +1,8 @@
 package flexus.mvc.commands
 {
 
-import flexus.mvc.interfaces.INotification;
 import flexus.mvc.interfaces.ICommand;
+import flexus.mvc.interfaces.INotification;
 
 /**
  * A simple interface implementation for <code>ICommand</code>.

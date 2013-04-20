@@ -22,7 +22,6 @@
 package flexus.mdi.events
 {
 
-import mx.effects.IEffectInstance;
 import mx.events.EffectEvent;
 
 /**

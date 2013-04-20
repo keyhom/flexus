@@ -1,28 +1,28 @@
-//------------------------------------------------------------------------------
-//
-//   PureArt Archetype. Make any work easier. 
-// 
-//   Copyright (C) 2011  pureart.org 
-// 
-//   This program is free software: you can redistribute it and/or modify 
-//   it under the terms of the GNU General Public License as published by 
-//   the Free Software Foundation, either version 3 of the License, or 
-//   (at your option) any later version. 
-// 
-//   This program is distributed in the hope that it will be useful, 
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-//   GNU General Public License for more details. 
-// 
-//   You should have received a copy of the GNU General Public License 
-//   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-//
-//------------------------------------------------------------------------------
+/*
+ * Copyright (c) 2013 keyhom.c@gmail.com.
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from
+ * the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose
+ * excluding commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ *     1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software
+ *     in a product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ *
+ *     2. Altered source versions must be plainly marked as such, and must not
+ *     be misrepresented as being the original software.
+ *
+ *     3. This notice may not be removed or altered from any source
+ *     distribution.
+ */
 
-package flexus.socket
-{
+package flexus.socket {
 
-import flash.errors.IOError;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
@@ -30,190 +30,122 @@ import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.Socket;
+
 import flexus.io.ByteBuffer;
 
 /**
- *
- *  @author keyhom.c
- *
- *  @langversion 3.0
- *  @playerversion Flash 9
- *  @playerversion AIR 1.1
- *  @productversion Flex 3
+ *  @author keyhom
  */
-public class SocketChannel extends EventDispatcher
-{
-	//----------------------------------
-	// CLEAR 
-	//----------------------------------
+public class SocketChannel extends EventDispatcher {
 
-	static public const CLEAR:int = 1 << 1;
+    static public const CLEAR:int = 1 << 1;
+    static public const CONNECT:int = 1;
 
-	//----------------------------------
-	// CONNECT 
-	//----------------------------------
+    /**
+     * Creates a SocketChannel instance..
+     */
+    public function SocketChannel(socket:Socket = null) {
+        if (!socket)
+            socket = new Socket;
+        _socket = socket;
+        super(_socket);
+    }
 
-	static public const CONNECT:int = 1;
+    private var _remoteAddress:SocketAddress;
 
-	//--------------------------------------------------------------------------
-	//
-	//  Constructor 
-	//
-	//--------------------------------------------------------------------------
+    private var _socket:Socket;
 
-	/**
-	 *  Constructor.
-	 *
-	 *  @param socket
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function SocketChannel(socket:Socket = null)
-	{
-		if (!socket)
-			socket = new Socket;
-		_socket = socket;
-		super(_socket);
-	}
+    /**
+     * The socket.
+     */
+    public function get socket():Socket {
+        return _socket;
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Properties 
-	//
-	//--------------------------------------------------------------------------
-	//----------------------------------
-	// socket 
-	//----------------------------------
+    override public function toString():String {
+        return "SocketChannel: [remoteAddress=" + _remoteAddress + ", connected=" +
+                socket.connected + "]";
+    }
 
-	private var _socket:Socket;
+    /**
+     * Connects to the remote host by the specific socket address.
+     */
+    public function connect(address:SocketAddress, options:int = 3):IEventDispatcher {
+        if (address) {
+            _remoteAddress = address;
+            if (socket && (options & CONNECT == CONNECT)) {
+                removeAllListeners();
 
-	/**
-	 *  Retrieves the socket object.
-	 *
-	 *  @return socket
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get socket():Socket
-	{
-		return _socket;
-	}
+                if ((options & CLEAR) == CLEAR)
+                    closeIfConnected(socket);
 
-	//----------------------------------
-	// _remoteAddress 
-	//----------------------------------
+                socket.addEventListener(Event.CONNECT, connectHandler);
+                socket.addEventListener(Event.CLOSE, closeHandler);
+                socket.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+                socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
 
-	private var _remoteAddress:SocketAddress;
+                socket.connect(address.host.toString(), address.port);
+            }
+        }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Overridden methods 
-	//
-	//--------------------------------------------------------------------------
+        return this;
+    }
 
-	override public function toString():String
-	{
-		return "SocketChannel: [remoteAddress=" + _remoteAddress + ", connected=" +
-			socket.connected + "]";
-	}
+    protected function closeIfConnected(socket:Socket):void {
+        if (socket && socket.connected)
+            socket.close();
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Methods 
-	//
-	//--------------------------------------------------------------------------
+    protected function removeAllListeners():void {
+        if (socket.hasEventListener(Event.CONNECT))
+            socket.removeEventListener(Event.CONNECT, connectHandler);
 
-	public function connect(address:SocketAddress, options:int = 3):IEventDispatcher
-	{
-		if (address)
-		{
-			_remoteAddress = address;
-			if (socket && (options & CONNECT == CONNECT))
-			{
-				removeAllListeners();
+        if (socket.hasEventListener(Event.CLOSE))
+            socket.removeEventListener(Event.CLOSE, closeHandler);
 
-				if ((options & CLEAR) == CLEAR)
-					closeIfConnected(socket);
+        if (socket.hasEventListener(IOErrorEvent.IO_ERROR))
+            socket.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 
-				socket.addEventListener(Event.CONNECT, connectHandler);
-				socket.addEventListener(Event.CLOSE, closeHandler);
-				socket.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-				socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
+        if (socket.hasEventListener(SecurityErrorEvent.SECURITY_ERROR))
+            socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
 
-				socket.connect(address.host.toString(), address.port);
-			}
-		}
-		
-		return this;
-	}
+        if (socket.hasEventListener(ProgressEvent.SOCKET_DATA))
+            socket.removeEventListener(ProgressEvent.SOCKET_DATA, receiveHandler);
+    }
 
-	protected function closeHandler(event:Event):void
-	{
-		trace("Socket close: ", this);
-	}
+    protected function closeHandler(event:Event):void {
+        trace("Socket close: ", this);
+    }
 
-	protected function closeIfConnected(socket:Socket):void
-	{
-		if (socket && socket.connected)
-			socket.close();
-	}
+    protected function connectHandler(event:Event):void {
+        if (!hasEventListener(ProgressEvent.SOCKET_DATA))
+            socket.addEventListener(ProgressEvent.SOCKET_DATA, receiveHandler,
+                    false, 0, true);
+        trace("Socket Connected: ", this);
+        var buf:ByteBuffer = new ByteBuffer;
+        // length
+        buf.putInt(0x00);
+        // body
+        buf.put(0x01);
+        buf.putShort(0x11);
+        buf.putShort(0x11);
+        buf.putInt(0x22);
+        buf.putInt(0x22);
+        buf.putLong(1316352475072);
 
-	protected function connectHandler(event:Event):void
-	{
-		if (!hasEventListener(ProgressEvent.SOCKET_DATA))
-			socket.addEventListener(ProgressEvent.SOCKET_DATA, recieveHandler,
-									false, 0, true);
-		trace("Socket Connected: ", this);
-		var buf:ByteBuffer = new ByteBuffer;
-		// length
-		buf.putInt(0x00);
-		// body
-		buf.put(0x01);
-		buf.putShort(0x11);
-		buf.putShort(0x11);
-		buf.putInt(0x22);
-		buf.putInt(0x22);
-		buf.putLong(1316352475072);
+        buf.flip();
+        buf.putIntAt(buf.position, buf.remaining);
 
-		buf.flip();
-		buf.putIntAt(buf.position, buf.remaining);
+        socket.writeBytes(buf.array);
+        socket.flush();
+    }
 
-		socket.writeBytes(buf.array);
-		socket.flush();
-	}
+    protected function errorHandler(event:Event):void {
+        trace("Socket ERROR:", this, event);
+    }
 
-	protected function errorHandler(event:Event):void
-	{
-		trace("Socket ERROR:", this, event);
-	}
-
-	protected function recieveHandler(event:ProgressEvent):void
-	{
-		trace("Socket recieve:", this, event.bytesLoaded, event.bytesTotal);
-	}
-
-	protected function removeAllListeners():void
-	{
-		if (socket.hasEventListener(Event.CONNECT))
-			socket.removeEventListener(Event.CONNECT, connectHandler);
-
-		if (socket.hasEventListener(Event.CLOSE))
-			socket.removeEventListener(Event.CLOSE, closeHandler);
-
-		if (socket.hasEventListener(IOErrorEvent.IO_ERROR))
-			socket.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-
-		if (socket.hasEventListener(SecurityErrorEvent.SECURITY_ERROR))
-			socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
-
-		if (socket.hasEventListener(ProgressEvent.SOCKET_DATA))
-			socket.removeEventListener(ProgressEvent.SOCKET_DATA, recieveHandler);
-	}
+    protected function receiveHandler(event:ProgressEvent):void {
+        trace("Socket receive:", this, event.bytesLoaded, event.bytesTotal);
+    }
 }
 }

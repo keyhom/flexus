@@ -22,8 +22,9 @@
 package flexus.mdi.effects.effectClasses
 {
 
-import flexus.mdi.containers.MDIWindow;
 import flash.geom.Point;
+
+import flexus.mdi.containers.MDIWindow;
 
 /**
  *

@@ -27,7 +27,6 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
-import flexus.mdi.containers.MDIGroup;
 import flexus.mdi.containers.MDIWindow;
 import flexus.mdi.effects.IMDIEffectsDescriptor;
 import flexus.mdi.effects.MDIEffectsDescriptorBase;
@@ -42,7 +41,6 @@ import mx.core.FlexGlobals;
 import mx.core.IFlexDisplayObject;
 import mx.core.IVisualElement;
 import mx.core.IVisualElementContainer;
-import mx.core.UIComponent;
 import mx.effects.CompositeEffect;
 import mx.effects.Effect;
 import mx.events.EffectEvent;

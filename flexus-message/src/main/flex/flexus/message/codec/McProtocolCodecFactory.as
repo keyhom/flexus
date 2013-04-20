@@ -22,8 +22,9 @@
 package flexus.message.codec
 {
 
+import flash.utils.Endian;
+
 import flexus.core.xwork.service.IoHandler;
-import flexus.core.xwork.service.IoServiceEvent;
 import flexus.core.xwork.session.IoSession;
 import flexus.logging.LoggerFactory;
 import flexus.xwork.filters.codec.ProtocolCodecFactory;
@@ -31,7 +32,6 @@ import flexus.xwork.filters.codec.ProtocolDecoder;
 import flexus.xwork.filters.codec.ProtocolEncoder;
 
 import mx.logging.ILogger;
-import flash.utils.Endian;
 
 /**
  *

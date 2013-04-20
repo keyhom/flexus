@@ -18,12 +18,11 @@
  */
 package flexus.web.aplist;
 
-import java.io.Serializable;
-import java.net.SocketAddress;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.net.SocketAddress;
 
 /**
  * @author pureart.org

@@ -1,8 +1,8 @@
 package flexus.mvc.events
 {
-	import flash.events.Event;
+import flash.events.Event;
 
-	/**
+/**
 	 * @author keyhom.c
 	 */
 	public class ContextEvent extends Event

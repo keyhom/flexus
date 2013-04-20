@@ -2,7 +2,6 @@ package flexus.inject.impl
 {
 
 import flash.system.ApplicationDomain;
-import flash.utils.getDefinitionByName;
 
 import flexus.inject.*;
 import flexus.metadata.*;
@@ -79,9 +78,10 @@ internal class InjectorImpl implements IInjector
 }
 }
 
+import flash.utils.Dictionary;
+
 import flexus.inject.*;
 import flexus.inject.impl.*;
-import flash.utils.Dictionary;
 
 /**
  * @author keyhom.c

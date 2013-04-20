@@ -1,8 +1,9 @@
 package flexus.inject.model
 {
 
-import flexus.inject.entities.UserInfo;
 import flash.events.EventDispatcher;
+
+import flexus.inject.entities.UserInfo;
 
 public class UserProxy extends EventDispatcher implements IUser
 {

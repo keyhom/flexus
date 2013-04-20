@@ -37,10 +37,7 @@ import mx.effects.Effect;
 import mx.effects.Move;
 import mx.effects.Parallel;
 import mx.effects.Resize;
-import mx.effects.Rotate;
 import mx.effects.Sequence;
-import mx.effects.WipeDown;
-import mx.events.EffectEvent;
 
 /**
  * Collection of effects inspired by Windows Vista.

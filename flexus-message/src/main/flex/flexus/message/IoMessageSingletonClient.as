@@ -22,20 +22,20 @@
 package flexus.message
 {
 
-	import flash.events.Event;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
-	
-	import flexus.core.xwork.future.FutureEvent;
-	import flexus.core.xwork.service.IoConnector;
-	import flexus.core.xwork.session.IoSession;
-	import flexus.errors.IllegalStateError;
-	import flexus.socket.SocketAddress;
-	import flexus.utils.ArrayQueue;
-	import flexus.utils.IQueue;
-	import flexus.xwork.filters.codec.ProtocolCodecFactory;
-	
-	/**
+import flash.events.Event;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
+
+import flexus.core.xwork.future.FutureEvent;
+import flexus.core.xwork.service.IoConnector;
+import flexus.core.xwork.session.IoSession;
+import flexus.errors.IllegalStateError;
+import flexus.socket.SocketAddress;
+import flexus.utils.ArrayQueue;
+import flexus.utils.IQueue;
+import flexus.xwork.filters.codec.ProtocolCodecFactory;
+
+/**
 	 *  @author keyhom.c
 	 */
 	public class IoMessageSingletonClient extends IoMessageClient

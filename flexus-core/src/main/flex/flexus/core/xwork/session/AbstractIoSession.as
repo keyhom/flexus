@@ -1,26 +1,27 @@
-//------------------------------------------------------------------------------
-//
-//   PureArt Archetype. Make any work easier. 
-// 
-//   Copyright (C) 2011  pureart.org 
-// 
-//   This program is free software: you can redistribute it and/or modify 
-//   it under the terms of the GNU General Public License as published by 
-//   the Free Software Foundation, either version 3 of the License, or 
-//   (at your option) any later version. 
-// 
-//   This program is distributed in the hope that it will be useful, 
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-//   GNU General Public License for more details. 
-// 
-//   You should have received a copy of the GNU General Public License 
-//   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-//
-//------------------------------------------------------------------------------
+/*
+ * Copyright (c) 2013 keyhom.c@gmail.com.
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from
+ * the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose
+ * excluding commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ *     1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software
+ *     in a product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ *
+ *     2. Altered source versions must be plainly marked as such, and must not
+ *     be misrepresented as being the original software.
+ *
+ *     3. This notice may not be removed or altered from any source
+ *     distribution.
+ */
 
-package flexus.core.xwork.session
-{
+package flexus.core.xwork.session {
 
 import flash.errors.IOError;
 import flash.events.EventDispatcher;
@@ -36,435 +37,193 @@ import flexus.io.ByteBuffer;
 import mx.logging.ILogger;
 
 /**
- *
- *  @author keyhom.c
- *
- *  @langversion 3.0
- *  @playerversion Flash 9
- *  @playerversion AIR 1.1
- *  @productversion Flex 3
+ * @author keyhom
  */
-public class AbstractIoSession extends EventDispatcher implements IoSession
-{
+public class AbstractIoSession extends EventDispatcher implements IoSession {
 
-	//--------------------------------------------------------------------------
-	//
-	//  Class properties 
-	//
-	//--------------------------------------------------------------------------
-	//----------------------------------
-	// SESSION_ID_GENERATOR 
-	//----------------------------------
+    static private var SESSION_ID_GENERATOR:uint = 0;
 
-	static private var SESSION_ID_GENERATOR:uint = 0;
+    /**
+     * Creates an AbstractIoSession concrete instance.
+     */
+    public function AbstractIoSession(service:IoConnector) {
+        if (!service)
+            throw new ArgumentError('service');
 
-	//--------------------------------------------------------------------------
-	//
-	//  Constructor 
-	//
-	//--------------------------------------------------------------------------
+        this._service = service;
+        this._sessionId = ++SESSION_ID_GENERATOR;
+    }
 
-	/**
-	 *  Constructor.
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function AbstractIoSession(service:IoConnector)
-	{
-		if (!service)
-			throw new ArgumentError('service');
+    private var _attributes:Object = {};
 
-		this._service = service;
-		this._sessionId = ++SESSION_ID_GENERATOR;
-	}
+    public function get connected():Boolean {
+        // must to be implemented.
+        return false;
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Properties 
-	//
-	//--------------------------------------------------------------------------
+    public function get filterChain():IoFilterChain {
+        return null;
+    }
 
-	//----------------------------------
-	// connected 
-	//----------------------------------
+    public function get handler():IoHandler {
+        if (service)
+            return service.handler;
+        return null;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get connected():Boolean
-	{
-		// must to be implemented.
-		return false;
-	}
+    private var _service:IoConnector;
 
-	//----------------------------------
-	// filterChain 
-	//----------------------------------
+    public function get service():IoConnector {
+        return _service;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get filterChain():IoFilterChain
-	{
-		return null;
-	}
+    private var _sessionId:uint;
 
-	//----------------------------------
-	// handler 
-	//----------------------------------
+    public function get sessionId():uint {
+        return _sessionId;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get handler():IoHandler
-	{
-		if (service)
-			return service.handler;
-		return null;
-	}
+    override public function toString():String {
+        return "IoSession#" + sessionId;
+    }
 
-	//----------------------------------
-	// service 
-	//----------------------------------
+    public function close(now:Boolean = false, closeFuture:Function = null):void {
+        // must to be implemented.
+        try {
+            if (closeFuture != null)
+                closeFuture.call(null, new FutureEvent(FutureEvent.CLOSED, this));
+        }
+        finally {
+            service.remove(this);
+        }
+    }
 
-	private var _service:IoConnector;
+    public function containsAttribute(key:Object):Boolean {
+        return key in _attributes;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get service():IoConnector
-	{
-		return _service;
-	}
+    public function flush(message:Object):void {
+        if (!message)
+            throw new ArgumentError('message');
 
-	//----------------------------------
-	// sessionId 
-	//----------------------------------
+        if (message is ByteBuffer) {
+            var writeBytes:uint = writeBuffer(ByteBuffer(message));
 
-	private var _sessionId:uint;
+            if (writeBytes > 0) {
+                filterChain.fireMessageSent(message);
+            }
+        }
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get sessionId():uint
-	{
-		return _sessionId;
-	}
+    public function getAttribute(key:Object, defaultValue:Object = null):Object {
+        var o:Object = null;
 
-	//--------------------------------------------------------------------------
-	//
-	//  Overridden methods 
-	//
-	//--------------------------------------------------------------------------
+        if (key in _attributes) {
+            o = _attributes[key];
+        }
 
-	override public function toString():String
-	{
-		return "IoSession#" + sessionId;
-	}
+        if (!o && defaultValue)
+            return defaultValue;
 
-	//--------------------------------------------------------------------------
-	//
-	//  Methods 
-	//
-	//--------------------------------------------------------------------------
+        return o;
+    }
 
-	/**
-	 *
-	 *  @param now
-	 *  @param closeFuture
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function close(now:Boolean = false, closeFuture:Function = null):void
-	{
-		// must to be implemented.
-		try
-		{
-			if (closeFuture != null)
-				closeFuture.call(null, new FutureEvent(FutureEvent.CLOSED, this));
-		}
-		finally
-		{
-			service.remove(this);
-		}
-	}
+    public function getAttributeKeys():Array {
+        var result:Array = [];
 
-	private var _attributes:Object = {};
+        for (var k:* in _attributes) {
+            result.push(k);
+        }
+        return result;
+    }
 
-	/**
-	 *
-	 *  @param key
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function containsAttribute(key:Object):Boolean
-	{
-		return key in _attributes;
-	}
+    public function removeAttribute(key:Object, defaultValue:Object = null):Object {
+        var originObject:Object = null
 
-	/**
-	 *
-	 * @param message
-	 * @throws ArgumentError
-	 */
-	public function flush(message:Object):void
-	{
-		if (!message)
-			throw new ArgumentError('message');
+        if (key in _attributes) {
+            originObject = _attributes[key];
+            _attributes[key] = null;
+            delete _attributes[key];
+        }
 
-		if (message is ByteBuffer)
-		{
-			var writeBytes:uint = writeBuffer(ByteBuffer(message));
+        if (!originObject && defaultValue)
+            return defaultValue;
 
-			if (writeBytes > 0)
-			{
-				filterChain.fireMessageSent(message);
-			}
-		}
-	}
+        return originObject;
+    }
 
-	/**
-	 *
-	 *  @param key
-	 *  @param defaultValue
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function getAttribute(key:Object, defaultValue:Object = null):Object
-	{
-		var o:Object = null;
+    public function replaceAttribute(key:Object, oldValue:Object, newValue:Object):Object {
+        if (key && (key in _attributes)) {
+            var obj:Object = _attributes[key];
 
-		if (key in _attributes)
-		{
-			o = _attributes[key];
-		}
+            if (obj == oldValue) {
+                _attributes[key] = newValue;
+                return obj;
+            }
+        }
+        return null;
+    }
 
-		if (!o && defaultValue)
-			return defaultValue;
+    public function setAttribute(key:Object, value:Object):Object {
+        var originObject:Object = _attributes[key];
+        _attributes[key] = value;
+        return originObject;
+    }
 
-		return o;
-	}
+    public function setAttributeIfAbsent(key:Object, value:Object):Object {
+        if (!(key in _attributes) || !_attributes[key])
+            _attributes[key] = value;
+        return null;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function getAttributeKeys():Array
-	{
-		var result:Array = [];
+    public function write(message:Object, writeFuture:Function = null):void {
+        if (!message)
+            throw new ArgumentError('message');
 
-		for (var k:* in _attributes)
-		{
-			result.push(k);
-		}
-		return result;
-	}
+        // checking the session is alive.
+        if (!connected) {
+            var future:FutureEvent = new FutureEvent(FutureEvent.WRITE, this,
+                    new IOError('write to closed session!'));
+            dispatchEvent(future);
+            return;
+        }
 
-	/**
-	 *
-	 *  @param key
-	 *  @param defaultValue
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function removeAttribute(key:Object, defaultValue:Object = null):Object
-	{
-		var originObject:Object = null
+        var buf:ByteBuffer = null;
 
-		if (key in _attributes)
-		{
-			originObject = _attributes[key];
-			_attributes[key] = null;
-			delete _attributes[key];
-		}
+        if (message is ByteArray)
+            message = ByteBuffer.wrap(ByteArray(message));
 
-		if (!originObject && defaultValue)
-			return defaultValue;
+        if (message is ByteBuffer) {
+            buf = message as ByteBuffer;
 
-		return originObject;
-	}
+            if (buf && !buf.hasRemaining)
+                throw new ArgumentError('message is empty. Forgot to call flip()?');
+        }
+        else if (message is String) {
+            buf = new ByteBuffer;
+            buf.putString(message.toString());
+        }
+        else if (message is FileReference) {
+            // TODO: implemented by file stream.
+        }
 
-	/**
-	 *
-	 *  @param key
-	 *  @param oldValue
-	 *  @param newValue
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function replaceAttribute(key:Object, oldValue:Object, newValue:Object):Object
-	{
-		if (key && (key in _attributes))
-		{
-			var obj:Object = _attributes[key];
+        // filtering the chain to write.
+        filterChain.fireFilterWirte(message);
+    }
 
-			if (obj == oldValue)
-			{
-				_attributes[key] = newValue;
-				return obj;
-			}
-		}
-		return null;
-	}
+    public function traceStatistics(log:ILogger):void {
+        log.debug("Not found the statistics information now.");
+    }
 
-	/**
-	 *
-	 *  @param key
-	 *  @param value
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function setAttribute(key:Object, value:Object):Object
-	{
-		var originObject:Object = _attributes[key];
-		_attributes[key] = value;
-		return originObject;
-	}
-
-	/**
-	 *
-	 *  @param key
-	 *  @param value
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function setAttributeIfAbsent(key:Object, value:Object):Object
-	{
-		if (!(key in _attributes) || !_attributes[key])
-			_attributes[key] = value;
-		return null;
-	}
-
-	/**
-	 *
-	 *  @param message
-	 *  @param writeFuture
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function write(message:Object, writeFuture:Function = null):void
-	{
-		if (!message)
-			throw new ArgumentError('message');
-
-		// checking the session is alive.
-		if (!connected)
-		{
-			var future:FutureEvent = new FutureEvent(FutureEvent.WRITE, this,
-													 new IOError('write to closed session!'));
-			dispatchEvent(future);
-			return;
-		}
-
-		var buf:ByteBuffer = null;
-
-		if (message is ByteArray)
-			message = ByteBuffer.wrap(ByteArray(message));
-
-		if (message is ByteBuffer)
-		{
-			buf = message as ByteBuffer;
-
-			if (buf && !buf.hasRemaining)
-				throw new ArgumentError('message is empty. Forgot to call flip()?');
-		}
-		else if (message is String)
-		{
-			buf = new ByteBuffer;
-			buf.putString(message.toString());
-		}
-		else if (message is FileReference)
-		{
-			// TODO: implemented by file stream.
-		}
-
-		// fitler the chain to write.
-		filterChain.fireFilterWirte(message);
-	}
-
-	/**
-	 * Writes the buffer and flush to the remote.
-	 *
-	 * @param buffer
-	 * @return bytes length of the flushing.
-	 */
-	protected function writeBuffer(buffer:ByteBuffer):uint
-	{
-		// must to be implemented.
-		return 0;
-	}
-
-	public function traceStatistics(log:ILogger):void
-	{
-		log.debug("Not found the statistics information now.");
-	}
+    /**
+     * Writes the buffer and flush to the remote.
+     *
+     * @param buffer
+     * @return bytes length of the flushing.
+     */
+    protected function writeBuffer(buffer:ByteBuffer):uint {
+        // must to be implemented.
+        return 0;
+    }
 }
 }

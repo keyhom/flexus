@@ -24,14 +24,14 @@ package flexus.mdi.effects.effectsLib
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import flexus.mdi.containers.MDIWindow;
+import flexus.mdi.managers.MDIManager;
+
 import mx.effects.Effect;
 import mx.effects.Move;
 import mx.effects.Parallel;
-import mx.effects.Resize;
 import mx.events.EffectEvent;
-import flexus.mdi.containers.MDIWindow;
-import flexus.mdi.effects.MDIEffectsDescriptorBase;
-import flexus.mdi.managers.MDIManager;
 
 /**
  *

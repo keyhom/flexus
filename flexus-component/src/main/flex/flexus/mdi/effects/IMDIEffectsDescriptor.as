@@ -24,9 +24,11 @@ package flexus.mdi.effects
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import mx.effects.Effect;
+
 import flexus.mdi.containers.MDIWindow;
 import flexus.mdi.managers.MDIManager;
+
+import mx.effects.Effect;
 
 /**
  * Interface expected by MDIManager. All effects classes must implement this interface.

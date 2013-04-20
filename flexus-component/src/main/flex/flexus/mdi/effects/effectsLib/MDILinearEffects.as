@@ -28,21 +28,13 @@ import flash.geom.Rectangle;
 import flexus.mdi.containers.MDIWindow;
 import flexus.mdi.effects.IMDIEffectsDescriptor;
 import flexus.mdi.effects.MDIEffectsDescriptorBase;
-import flexus.mdi.effects.effectClasses.MDIGroupEffectItem;
 import flexus.mdi.managers.MDIManager;
 
 import mx.core.IVisualElement;
-import mx.effects.AnimateProperty;
-import mx.effects.Blur;
-import mx.effects.Dissolve;
 import mx.effects.Effect;
 import mx.effects.Move;
-import mx.effects.Parallel;
 import mx.effects.Resize;
-import mx.effects.Rotate;
 import mx.effects.Sequence;
-import mx.effects.WipeDown;
-import mx.events.EffectEvent;
 
 /**
  *

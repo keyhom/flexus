@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.pureart.flexus</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>flexus-tester</artifactId>
@@ -18,8 +18,6 @@
 	</modules>
 	
 	<properties>
-		<flexus.groupId>org.pureart.flexus</flexus.groupId>
-		<flexus.version>1.0-SNAPSHOT</flexus.version>
 		<flexus.incremental>true</flexus.incremental>
 	</properties>
 
@@ -40,37 +38,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>pureart-releases</id>
-			<name>PureArt Repository</name>
-			<url>http://www.pureart.org:8081/nexus/content/groups/public</url>
-			<releases>
-				<updatePolicy>daily</updatePolicy>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<!-- <updatePolicy>always</updatePolicy> -->
-				<updatePolicy>interval:3600</updatePolicy>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>pureart-plugin</id>
-			<name>PureArt-Plugin-Repository</name>
-			<url>http://www.pureart.org:8081/nexus/content/groups/public</url>
-			<releases>
-				<updatePolicy>daily</updatePolicy>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<updatePolicy>interval:7200</updatePolicy>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

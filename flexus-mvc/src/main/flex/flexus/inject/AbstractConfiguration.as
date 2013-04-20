@@ -2,8 +2,6 @@ package flexus.inject
 {
 
 import flash.events.EventDispatcher;
-import flash.events.Event;
-
 
 /**
  * @author keyhom.c

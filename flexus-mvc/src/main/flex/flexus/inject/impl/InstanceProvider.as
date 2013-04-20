@@ -1,8 +1,9 @@
 package flexus.inject.impl
 {
 
-import flexus.inject.*;
 import flash.utils.Dictionary;
+
+import flexus.inject.*;
 
 /**
  * @author keyhom.c

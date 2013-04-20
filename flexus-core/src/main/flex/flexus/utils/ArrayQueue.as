@@ -1,142 +1,66 @@
-//------------------------------------------------------------------------------
-//
-//   PureArt Archetype. Make any work easier. 
-// 
-//   Copyright (C) 2011  pureart.org 
-// 
-//   This program is free software: you can redistribute it and/or modify 
-//   it under the terms of the GNU General Public License as published by 
-//   the Free Software Foundation, either version 3 of the License, or 
-//   (at your option) any later version. 
-// 
-//   This program is distributed in the hope that it will be useful, 
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-//   GNU General Public License for more details. 
-// 
-//   You should have received a copy of the GNU General Public License 
-//   along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-//
-//------------------------------------------------------------------------------
+/*
+ * Copyright (c) 2013 keyhom.c@gmail.com.
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from
+ * the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose
+ * excluding commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ *     1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software
+ *     in a product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ *
+ *     2. Altered source versions must be plainly marked as such, and must not
+ *     be misrepresented as being the original software.
+ *
+ *     3. This notice may not be removed or altered from any source
+ *     distribution.
+ */
 
-package flexus.utils
-{
+package flexus.utils {
 
 /**
- *
- *  @author keyhom.c
- *
- *  @langversion 3.0
- *  @playerversion Flash 9
- *  @playerversion AIR 1.1
- *  @productversion Flex 3
+ * @author keyhom
  */
-public class ArrayQueue implements IQueue
-{
+public class ArrayQueue implements IQueue {
 
-	//--------------------------------------------------------------------------
-	//
-	//  Constructor 
-	//
-	//--------------------------------------------------------------------------
+    /**
+     *  Creates an ArrayQueue instance.
+     */
+    public function ArrayQueue(capacity:Number = Number.NaN) {
+        super();
+    }
 
-	/**
-	 *  Constructor.
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function ArrayQueue(capacity:Number = Number.NaN)
-	{
-		super();
-	}
+    private var _queue:Array = new Array;
 
-	//--------------------------------------------------------------------------
-	//
-	//  Properties 
-	//
-	//--------------------------------------------------------------------------
-	//----------------------------------
-	// empty 
-	//----------------------------------
+    public function get empty():Boolean {
+        return _queue.length == 0;
+    }
 
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function get empty():Boolean
-	{
-		return _queue.length == 0;
-	}
+    public function get size():uint {
+        return _queue.length;
+    }
 
-	//----------------------------------
-	// _queue 
-	//----------------------------------
+    public function offer(o:Object):void {
+        _queue.push(o);
+    }
 
-	private var _queue:Array = new Array;
+    public function peek():Object {
+        if (!empty)
+            return _queue[0];
+        return null;
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Methods 
-	//
-	//--------------------------------------------------------------------------
+    public function poll():Object {
+        return _queue.shift();
+    }
 
-	/**
-	 *
-	 *  @param o
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function offer(o:Object):void
-	{
-		_queue.push(o);
-	}
-
-	/**
-	 *
-	 *  @return
-	 *
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function peek():Object
-	{
-		if (!empty)
-			return _queue[0];
-		return null;
-	}
-
-	/**
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	public function poll():Object
-	{
-		return _queue.shift();
-	}
-
-	public function get size():uint
-	{
-		return _queue.length;
-	}
-
-	public function clear():void
-	{
-		_queue = new Array;
-	}
+    public function clear():void {
+        _queue = new Array;
+    }
 }
 }

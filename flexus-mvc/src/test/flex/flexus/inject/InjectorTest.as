@@ -2,21 +2,15 @@ package flexus.inject
 {
 
 import flash.system.ApplicationDomain;
-import flexus.inject.*;
-import flexus.inject.facade.config.SystemConfig;
-import flexus.inject.facade.*;
-import flexus.inject.entities.*;
-import flexus.inject.model.*;
 
-import org.flexunit.Assert;
-import flash.utils.getQualifiedClassName;
+import flexus.inject.entities.*;
+import flexus.inject.facade.config.SystemConfig;
+import flexus.inject.model.*;
+import flexus.logging.LoggerFactory;
 
 import mx.logging.ILogger;
-import mx.logging.LogEventLevel;
-import mx.logging.LogLogger;
-import mx.logging.targets.TraceTarget;
 
-import flexus.logging.LoggerFactory;
+import org.flexunit.Assert;
 
 public class InjectorTest
 {

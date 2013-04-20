@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>flexus-tester</artifactId>
 		<groupId>org.pureart.flexus</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>flexus-web</artifactId>
 	<packaging>war</packaging>

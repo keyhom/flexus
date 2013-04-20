@@ -1,9 +1,10 @@
 package flexus.inject
 {
 
-import flexus.inject.impl.InternalInjectionCreator;
-import flash.utils.Dictionary;
 import flash.net.registerClassAlias;
+import flash.utils.Dictionary;
+
+import flexus.inject.impl.InternalInjectionCreator;
 
 /**
  * A global static class for injection framework.

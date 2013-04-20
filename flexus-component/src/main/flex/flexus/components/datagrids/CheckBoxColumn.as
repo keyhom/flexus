@@ -23,6 +23,7 @@ package flexus.components.datagrids
 {
 
 import flash.events.Event;
+
 import mx.controls.dataGridClasses.DataGridColumn;
 
 [Event(name = "click", type = "flash.events.MouseEvent")]

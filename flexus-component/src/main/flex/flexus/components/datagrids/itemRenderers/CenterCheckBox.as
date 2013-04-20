@@ -24,6 +24,7 @@ package flexus.components.datagrids.itemRenderers
 
 import flash.display.DisplayObject;
 import flash.text.TextField;
+
 import mx.controls.CheckBox;
 
 /**

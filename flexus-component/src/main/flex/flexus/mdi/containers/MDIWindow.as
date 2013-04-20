@@ -29,7 +29,6 @@ import flash.geom.Rectangle;
 import flexus.mdi.events.MDIWindowEvent;
 import flexus.mdi.managers.MDIManager;
 
-import mx.controls.Alert;
 import mx.events.CloseEvent;
 
 import spark.components.TitleWindow;

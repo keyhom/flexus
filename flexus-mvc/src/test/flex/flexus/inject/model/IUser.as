@@ -2,6 +2,7 @@ package flexus.inject.model
 {
 
 import flash.events.IEventDispatcher;
+
 import flexus.inject.entities.UserInfo;
 
 public interface IUser extends IEventDispatcher

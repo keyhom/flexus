@@ -23,6 +23,7 @@ package flexus.components.trees
 {
 
 import flash.events.MouseEvent;
+
 import mx.controls.Tree;
 import mx.controls.treeClasses.TreeItemRenderer;
 

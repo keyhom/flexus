@@ -19,8 +19,7 @@
 //
 //------------------------------------------------------------------------------
 
-package flexus.message
-{
+package flexus.message {
 
 import flash.errors.IllegalOperationError;
 import flash.events.EventDispatcher;
@@ -33,12 +32,12 @@ import mx.events.Request;
 /**
  *  The event fired when the message being decoded.
  */
-[Event(name = "decode", type = "mx.events.Request")]
+[Event(name="decode", type="mx.events.Request")]
 
 /**
  *  The event fired when the message being encoded.
  */
-[Event(name = "encode", type = "mx.events.Request")]
+[Event(name="encode", type="mx.events.Request")]
 
 /**
  *
@@ -49,121 +48,111 @@ import mx.events.Request;
  *  @playerversion AIR 1.1
  *  @productversion Flex 3
  */
-public class IoMessage extends EventDispatcher
-{
+public class IoMessage extends EventDispatcher {
 
-	static public const DECODE:String = "decode";
-	static public const ENCODE:String = "encode";
+    static public const DECODE:String = "decode";
+    static public const ENCODE:String = "encode";
 
-	//--------------------------------------------------------------------------
-	//
-	//  Constructor 
-	//
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Constructor
+    //
+    //--------------------------------------------------------------------------
 
-	public function IoMessage(info:IoMessageInfo)
-	{
-		super();
-		if(!info)
-			throw new ArgumentError("Invalid information object for IoMessage!");
+    public function IoMessage(info:IoMessageInfo) {
+        super();
+        if (!info)
+            throw new ArgumentError("Invalid information object for IoMessage!");
 
-		this._info = info;
+        this._info = info;
 
-		init();
-	}
+        init();
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Properties 
-	//
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //--------------------------------------------------------------------------
 
-	//---------------------------------- 
-	//  info 
-	//---------------------------------- 
+    //----------------------------------
+    //  info
+    //----------------------------------
 
-	/**
-	 *  @private
-	 *  Storage for the info property.
-	 */
-	private var _info:IoMessageInfo;
+    /**
+     *  @private
+     *  Storage for the info property.
+     */
+    private var _info:IoMessageInfo;
 
-	/**
-	 *  Retrieves the information interface of the IoMessage.
-	 */
-	public function get info():IoMessageInfo
-	{
-		return _info;
-	}
+    /**
+     *  Retrieves the information interface of the IoMessage.
+     */
+    public function get info():IoMessageInfo {
+        return _info;
+    }
 
-	//----------------------------------
-	//  contract
-	//----------------------------------
+    //----------------------------------
+    //  contract
+    //----------------------------------
 
-	/**
-	 *  Retrieves the contract object which binding with the message object.
-	 */
-	public function get contract():*
-	{
-		return info.contract;
-	}
+    /**
+     *  Retrieves the contract object which binding with the message object.
+     */
+    public function get contract():* {
+        return info.contract;
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Methods 
-	//
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Methods
+    //
+    //--------------------------------------------------------------------------
 
-	final protected function init():void
-	{
-		this.addEventListener(DECODE, decodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
-		this.addEventListener(ENCODE, encodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
-	}
+    final protected function init():void {
+        this.addEventListener(DECODE, decodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
+        this.addEventListener(ENCODE, encodeHandler, false, EventPriority.DEFAULT_HANDLER, true);
+    }
 
-	/**
-	 *  dispose
-	 */
-	public function dispose():void
-	{
-		// nothing to do.
-	}
+    /**
+     *  dispose
+     */
+    public function dispose():void {
+        // nothing to do.
+    }
 
-	/**
-	 *  Retrieves the buffer object attach in the request.
-	 */
-	protected function getBuffer(e:Request):ByteBuffer
-	{
-		if(e.value && e.value is ByteBuffer)
-		{
-			return ByteBuffer(e.value);
-		}
+    /**
+     *  Retrieves the buffer object attach in the request.
+     */
+    protected function getBuffer(e:Request):ByteBuffer {
+        if (e.value && e.value is ByteBuffer) {
+            return ByteBuffer(e.value);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	//--------------------------------------------------------------------------
-	//
-	//  Event handlers 
-	//
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Event handlers
+    //
+    //--------------------------------------------------------------------------
 
-	/**
-	 *  Handle the data decoding.
-	 */
-	protected function decodeHandler(e:Request):void
-	{
-		// TODO: decode the data.
-		throw new IllegalOperationError("Must implemented the decode handler!");
-	}
+    /**
+     *  Handle the data decoding.
+     */
+    protected function decodeHandler(e:Request):void {
+        // TODO: decode the data.
+        throw new IllegalOperationError("Must implemented the decode handler!");
+    }
 
-	/**
-	 *  Handle the data encoding.
-	 */
-	protected function encodeHandler(e:Request):void
-	{
-		// TODO: encode the data.
-		throw new IllegalOperationError("Must implemented the encode handler!");
-	}
+    /**
+     *  Handle the data encoding.
+     */
+    protected function encodeHandler(e:Request):void {
+        // TODO: encode the data.
+        throw new IllegalOperationError("Must implemented the encode handler!");
+    }
 
 }
 }

@@ -25,7 +25,6 @@ package flexus.mdi.containers
 import flexus.mdi.managers.MDIManager;
 
 import mx.core.IVisualElement;
-import mx.core.UIComponent;
 import mx.events.FlexEvent;
 
 import spark.components.Group;

@@ -22,14 +22,12 @@
 package flexus.context
 {
 
-import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.net.registerClassAlias;
 
 import flexus.metadata.IMetaElement;
 import flexus.metadata.IMetaInfo;
 import flexus.metadata.IMetadata;
-import flexus.metadata.Metadata;
 import flexus.metadata.MetadataParser;
 
 import mx.core.IMXMLObject;

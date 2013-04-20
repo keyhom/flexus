@@ -24,6 +24,7 @@ package flexus.components.trees
 
 import flash.display.Graphics;
 import flash.events.Event;
+
 import mx.controls.CheckBox;
 import mx.core.FlexSprite;
 import mx.core.mx_internal;

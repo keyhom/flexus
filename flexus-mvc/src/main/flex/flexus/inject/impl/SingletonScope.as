@@ -2,6 +2,7 @@ package flexus.inject.impl
 {
 
 import flash.utils.Dictionary;
+
 import flexus.inject.*;
 
 /**

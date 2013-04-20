@@ -1,10 +1,12 @@
 package flexus.message
 {
 
-import mx.logging.ILogger;
-import flexus.logging.LoggerFactory;
 import flash.events.EventDispatcher;
+
 import flexus.core.xwork.service.IoConnector;
+import flexus.logging.LoggerFactory;
+
+import mx.logging.ILogger;
 
 /**
  *  @author keyhom.c 
