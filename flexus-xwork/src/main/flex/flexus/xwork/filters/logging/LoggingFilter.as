@@ -45,22 +45,8 @@ public class LoggingFilter extends IoFilter {
         XworkLogTarget.addLogger(_logger);
     }
 
+    public var logLevel:int;
     private var _logger:ILogger;
-
-    private var _logLevel:int;
-
-    /**
-     * Retrieves the level of the Logging.
-     *
-     * @return logging level
-     */
-    public function get logLevel():int {
-        return _logLevel;
-    }
-
-    public function set logLevel(value:int):void {
-        this._logLevel = value;
-    }
 
     override public function exceptionCaught(nextFilter:NextFilter, session:IoSession, cause:Error):void {
         _logger.log(logLevel, "EXCEPTION - [{0}] {1}:{2} - {3}", cause.errorID,

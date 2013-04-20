@@ -295,18 +295,6 @@ public class ProtocolCodecFilter extends IoFilter {
         return out;
     }
 
-    /**
-     *
-     *  @param session
-     *  @param nextFilter
-     *  @param writeRequest
-     *  @return
-     *
-     *  @langversion 3.0
-     *  @playerversion Flash 9
-     *  @playerversion AIR 1.1
-     *  @productversion Flex 3
-     */
     private function getEncoderOut(session:IoSession, nextFilter:NextFilter, messsage:Object):ProtocolEncoderOutput {
         var out:ProtocolEncoderOutput = ProtocolEncoderOutput(session.getAttribute(ENCODER_OUT));
 
@@ -383,7 +371,6 @@ class ProtocolDecoderOutputImpl extends ProtocolDecoderOutput {
     }
 
     override public function flush(nextFilter:NextFilter, session:IoSession):void {
-
         while (!messageQueue.empty) {
             nextFilter.messageRecieved(session, messageQueue.poll());
         }

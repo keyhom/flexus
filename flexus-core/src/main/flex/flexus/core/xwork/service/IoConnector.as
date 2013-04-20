@@ -47,13 +47,15 @@ import mx.logging.LogLogger;
  */
 public class IoConnector extends EventDispatcher {
 
-    static private var DEFAULT_HANDLER:IoHandler = new IoHandler;
+    /**
+     * @private
+     */
+    static private var _DEFAULT_HANDLER:IoHandler = new IoHandler;
 
     /**
      * Creates an IoConnector instance..
      */
     public function IoConnector() {
-        super();
         logger = new LogLogger(getQualifiedClassName(IoConnector));
         XworkLogTarget.addLogger(logger);
 
@@ -63,6 +65,8 @@ public class IoConnector extends EventDispatcher {
         listeners = new IoServiceListenerSupport();
     }
 
+    public var handler:IoHandler;
+    public var filterChainBuilder:IoFilterChainBuilder = new DefaultIoFilterChainBuilder;
     protected var listeners:IoServiceListenerSupport;
     protected var sessions:Dictionary = new Dictionary();
     protected var logger:ILogger;
@@ -71,38 +75,9 @@ public class IoConnector extends EventDispatcher {
      * @inheritDoc
      */
     public function get filterChain():DefaultIoFilterChainBuilder {
-        if (_filterChainBuilder is DefaultIoFilterChainBuilder)
-            return DefaultIoFilterChainBuilder(_filterChainBuilder);
+        if (filterChainBuilder is DefaultIoFilterChainBuilder)
+            return DefaultIoFilterChainBuilder(filterChainBuilder);
         throw new Error("this filterChainBuilder is not the default builder!");
-    }
-
-    private var _filterChainBuilder:IoFilterChainBuilder = new DefaultIoFilterChainBuilder;
-
-    public function get filterChainBuilder():IoFilterChainBuilder {
-        return _filterChainBuilder;
-    }
-
-    /**
-     * @private
-     */
-    public function set filterChainBuilder(value:IoFilterChainBuilder):void {
-        _filterChainBuilder = value;
-    }
-
-    private var _handler:IoHandler;
-
-    /**
-     * @inheritDoc
-     */
-    public function get handler():IoHandler {
-        return _handler;
-    }
-
-    /**
-     * @private
-     */
-    public function set handler(value:IoHandler):void {
-        _handler = value;
     }
 
     /**
@@ -130,7 +105,7 @@ public class IoConnector extends EventDispatcher {
             throw new IllegalStateError("invalid remote address!");
 
         if (!handler) {
-            handler = DEFAULT_HANDLER;
+            handler = _DEFAULT_HANDLER;
         }
 
         // first to create the connect request and add it to the connect queue.
@@ -147,7 +122,7 @@ public class IoConnector extends EventDispatcher {
     public function remove(session:IoSession):void {
         session.filterChain.fireFilterClose();
         session.filterChain.fireSessionClosed();
-        AbstractIoSession(session).traceStatistics(logger);
+        AbstractIoSession.traceStatistics(logger);
     }
 
     protected function connect0(remoteAddress:SocketAddress, connectFuture:Function):void {

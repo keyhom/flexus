@@ -29,7 +29,7 @@ import flexus.core.xwork.session.IoSession;
 import flexus.errors.IllegalStateError;
 
 /**
- * @author keyhom.c
+ * @author keyhom
  */
 public class FutureEvent extends Event {
 

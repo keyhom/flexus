@@ -26,7 +26,7 @@ package flexus.core.xwork.service {
 import flash.events.EventDispatcher;
 
 [Event(name="sessionCreated", type="flexus.core.xwork.service.IoServiceEvent")]
-[Event(name="messageRecieved", type="flexus.core.xwork.service.IoServiceEvent")]
+[Event(name="messageReceived", type="flexus.core.xwork.service.IoServiceEvent")]
 [Event(name="sessionClosed", type="flexus.core.xwork.service.IoServiceEvent")]
 [Event(name="messageSent", type="flexus.core.xwork.service.IoServiceEvent")]
 [Event(name="sessionIdle", type="flexus.core.xwork.service.IoServiceEvent")]
@@ -34,6 +34,5 @@ import flash.events.EventDispatcher;
  * @author keyhom
  */
 public class IoHandler extends EventDispatcher {
-    // nothing to do...
 }
 }

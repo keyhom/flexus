@@ -33,7 +33,7 @@ import flexus.core.xwork.session.IoSession;
 public class IoServiceEvent extends Event {
 
     static public const EXCEPTION_CAUSED:String = "exceptionCaused";
-    static public const MESSAGE_RECIEVED:String = "messageRecieved";
+    static public const MESSAGE_RECEIVED:String = "messageReceived";
     static public const MESSAGE_SENT:String = "messageSent";
     static public const SERVICE_ACTIVATED:String = "serviceActivated";
     static public const SERVICE_CLOSED:String = "serviceClosed";

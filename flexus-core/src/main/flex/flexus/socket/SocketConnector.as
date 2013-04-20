@@ -106,7 +106,7 @@ public class SocketConnector extends IoConnector {
                 s.readBytes(buf.array);
 
                 if (buf.hasRemaining) {
-                    IoSession(sessions[s]).filterChain.fireMessageRecieved(buf);
+                    IoSession(sessions[s]).filterChain.fireMessageReceived(buf);
                 }
             }
         }
@@ -120,6 +120,9 @@ public class SocketConnector extends IoConnector {
             if (s in sessions) {
                 var session:IoSession = IoSession(sessions[s]);
                 session.service.remove(session);
+                // Deletes the socket storage in sessions.
+                sessions[s] = null;
+                delete sessions[s];
             }
         }
     }

@@ -114,7 +114,7 @@ public class IoFilterChain {
         tail.filter.filterWrite(tail.nextFilter, session, message);
     }
 
-    public function fireMessageRecieved(message:Object):void {
+    public function fireMessageReceived(message:Object):void {
         head.filter.messageRecieved(head.nextFilter, session, message);
     }
 
@@ -336,7 +336,7 @@ class TailFilter extends IoFilter {
     }
 
     override public function messageRecieved(nextFilter:NextFilter, session:IoSession, message:Object):void {
-        const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_RECIEVED,
+        const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_RECEIVED,
                 session, message);
         session.handler.dispatchEvent(event);
     }

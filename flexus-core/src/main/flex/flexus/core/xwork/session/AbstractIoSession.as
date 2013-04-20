@@ -41,7 +41,14 @@ import mx.logging.ILogger;
  */
 public class AbstractIoSession extends EventDispatcher implements IoSession {
 
+    /**
+     * @private
+     */
     static private var SESSION_ID_GENERATOR:uint = 0;
+
+    public static function traceStatistics(log:ILogger):void {
+        log.debug("Not found the statistics information now.");
+    }
 
     /**
      * Creates an AbstractIoSession concrete instance.
@@ -62,6 +69,7 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
     }
 
     public function get filterChain():IoFilterChain {
+        // must to be implemented.
         return null;
     }
 
@@ -131,14 +139,14 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
     public function getAttributeKeys():Array {
         var result:Array = [];
 
-        for (var k:* in _attributes) {
+        for (var k:String in _attributes) {
             result.push(k);
         }
         return result;
     }
 
     public function removeAttribute(key:Object, defaultValue:Object = null):Object {
-        var originObject:Object = null
+        var originObject:Object;
 
         if (key in _attributes) {
             originObject = _attributes[key];
@@ -209,10 +217,6 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
 
         // filtering the chain to write.
         filterChain.fireFilterWirte(message);
-    }
-
-    public function traceStatistics(log:ILogger):void {
-        log.debug("Not found the statistics information now.");
     }
 
     /**

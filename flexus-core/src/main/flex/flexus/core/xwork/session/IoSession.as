@@ -54,14 +54,17 @@ public interface IoSession extends IEventDispatcher {
 
     function getAttribute(key:Object, defaultValue:Object = null):Object;
 
+    //noinspection JSUnusedGlobalSymbols
     function getAttributeKeys():Array;
 
     function removeAttribute(key:Object, value:Object = null):Object;
 
+    //noinspection JSUnusedGlobalSymbols
     function replaceAttribute(key:Object, oldValue:Object, newValue:Object):Object;
 
     function setAttribute(key:Object, value:Object):Object;
 
+    //noinspection JSUnusedGlobalSymbols
     function setAttributeIfAbsent(key:Object, value:Object):Object;
 
     function write(message:Object, writeFuture:Function = null):void;

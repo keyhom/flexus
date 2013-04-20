@@ -10,7 +10,7 @@
 
   <properties>
     <!-- flexworks properties -->
-    <flexworks.version>1.0-SNAPSHOT</flexworks.version>
+    <!--<flexworks.version>1.0-SNAPSHOT</flexworks.version>-->
     <flexworks.debug>true</flexworks.debug>
     <flexworks.skip>false</flexworks.skip>
     <!-- flex sdk properties -->
@@ -25,18 +25,20 @@
   <build>
     <sourceDirectory>src/main/flex</sourceDirectory>
     <testSourceDirectory>src/test/flex</testSourceDirectory>
+
     <plugins>
       <plugin>
-        <groupId>org.pureart.maven.plugins</groupId>
-        <artifactId>flexworks-maven-plugin</artifactId>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
       </plugin>
     </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.pureart.maven.plugins</groupId>
-          <artifactId>flexworks-maven-plugin</artifactId>
-          <version>${flexworks.version}</version>
+          <groupId>org.sonatype.flexmojos</groupId>
+          <artifactId>flexmojos-maven-plugin</artifactId>
+          <version>4.2-beta</version>
           <extensions>true</extensions>
           <dependencies>
             <dependency>
@@ -50,40 +52,18 @@
             <debug>${flexworks.debug}</debug>
             <skip>${flexworks.skip}</skip>
             <allowSourcePathOverlap>true</allowSourcePathOverlap>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-                      org.pureart.maven.plugins
-                    </groupId>
-                    <artifactId>
-                      flexworks-maven-plugin
-                    </artifactId>
-                    <versionRange>
-                      [1.0-SNAPSHOT,)
-                    </versionRange>
-                    <goals>
-                      <goal>compileSwf</goal>
-                      <goal>compileSwc</goal>
-                      <goal>testCompile</goal>
-                      <goal>testSwf</goal>
-                      <goal>testSwc</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
+            <defines>
+              <property>
+                <name>COMPILER::DEBUG</name>
+                <value>${flexworks.debug}</value>
+              </property>
+              <property>
+                <name>COMPILER::RELEASE</name>
+                <value>!${flexworks.debug}</value>
+              </property>
+            </defines>
+            <storepass/>
+            <actionscriptFileEncoding>UTF-8</actionscriptFileEncoding>
           </configuration>
         </plugin>
       </plugins>
@@ -156,61 +136,14 @@
   </dependencyManagement>
 
   <profiles>
-    <profile>
-      <id>flexmojos</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-maven-plugin</artifactId>
-            <version>4.2-beta</version>
-            <dependencies>
-              <dependency>
-                <groupId>com.adobe.flex</groupId>
-                <artifactId>compiler</artifactId>
-                <version>${flex.sdk.version}</version>
-                <type>pom</type>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <debug>${flexworks.debug}</debug>
-              <skip>${flexworks.skip}</skip>
-              <allowSourcePathOverlap>true</allowSourcePathOverlap>
-              <storepass/>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <!-- For generate the FlashBuilder project entries -->
-    <profile>
-      <id>flashbuilder</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.pureart.maven.plugins</groupId>
-            <artifactId>flexworks-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-flashbuilder</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>flashbuilder</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <!-- For AS3 Library API Documents -->
     <profile>
       <id>attach-asdoc</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.pureart.maven.plugins</groupId>
-            <artifactId>flexworks-maven-plugin</artifactId>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-maven-plugin</artifactId>
             <executions>
               <execution>
                 <id>default-doc</id>
@@ -220,6 +153,7 @@
               </execution>
             </executions>
             <configuration>
+              <storepass/>
             </configuration>
           </plugin>
         </plugins>
@@ -240,8 +174,8 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.pureart.maven.plugins</groupId>
-            <artifactId>flexworks-maven-plugin</artifactId>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-maven-plugin</artifactId>
             <executions>
               <execution>
                 <id>default-sources</id>
@@ -255,6 +189,7 @@
       </build>
     </profile>
   </profiles>
+
   <!-- Modules -->
   <modules>
     <module>flexus-core</module>

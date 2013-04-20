@@ -291,6 +291,13 @@ public class ByteBuffer {
         return o;
     }
 
+    public function getString(length:uint = 0, charset:String = 'utf-8'):String {
+        if (!length) {
+            length = remaining;
+        }
+        return _array.readMultiByte(length, charset);
+    }
+
     public function getPrefixString(prefixLength:uint = 2, charset:String = 'utf-8'):String {
         var l:uint = 0;
 
