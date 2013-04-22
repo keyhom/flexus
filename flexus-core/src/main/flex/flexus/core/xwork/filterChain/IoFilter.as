@@ -48,8 +48,8 @@ public class IoFilter {
     public function init():void {
     }
 
-    public function messageRecieved(nextFilter:NextFilter, session:IoSession, message:Object):void {
-        nextFilter.messageRecieved(session, message);
+    public function messageReceived(nextFilter:NextFilter, session:IoSession, message:Object):void {
+        nextFilter.messageReceived(session, message);
     }
 
     public function messageSent(nextFilter:NextFilter, session:IoSession, message:Object):void {

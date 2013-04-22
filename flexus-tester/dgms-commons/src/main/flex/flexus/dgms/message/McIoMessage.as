@@ -81,7 +81,7 @@ public class McIoMessage extends IoMessage
 			var _contract:int = buf.getShort();
 			var _commandId:int = buf.getInt();
 
-			var event:IoMessageEvent = new IoMessageEvent(IoMessageEvent.MESSAGE_RECIEVED,
+			var event:IoMessageEvent = new IoMessageEvent(IoMessageEvent.MESSAGE_RECEIVED,
 														  buf);
 			info.dispatchEvent(event);
 		}

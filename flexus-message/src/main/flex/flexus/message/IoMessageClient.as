@@ -388,11 +388,11 @@ public class IoMessageClient extends IoHandler
 			chain.addLast(PROTOCOL_CDEC, new ProtocolCodecFilter(factory));
 		client.handler = this;
 
-		if (!this.hasEventListener(IoServiceEvent.MESSAGE_RECIEVED))
-			this.addEventListener(IoServiceEvent.MESSAGE_RECIEVED, messageRecievedHandler);
+		if (!this.hasEventListener(IoServiceEvent.MESSAGE_RECEIVED))
+			this.addEventListener(IoServiceEvent.MESSAGE_RECEIVED, messageReceivedHandler);
 	}
 
-	protected function messageRecievedHandler(e:IoServiceEvent):void
+	protected function messageReceivedHandler(e:IoServiceEvent):void
 	{
 		const req:Request = e.attachment as Request;
 

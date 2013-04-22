@@ -54,9 +54,9 @@ public class LoggingFilter extends IoFilter {
         nextFilter.exceptionCaught(session, cause);
     }
 
-    override public function messageRecieved(nextFilter:NextFilter, session:IoSession, message:Object):void {
+    override public function messageReceived(nextFilter:NextFilter, session:IoSession, message:Object):void {
         _logger.log(logLevel, "RECEIVED  - {0}", message);
-        nextFilter.messageRecieved(session, message);
+        nextFilter.messageReceived(session, message);
     }
 
     override public function messageSent(nextFilter:NextFilter, session:IoSession, message:Object):void {

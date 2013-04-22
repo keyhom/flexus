@@ -72,7 +72,7 @@ public class McProtocolCodecDecoder extends CumulativeProtocolDecoder
 			size = inb.getIntAt(inb.position);
 			
 			if (size == 0) {
-				// something illegal bytes recieved. close the connection imme.
+				// something illegal bytes received. close the connection imme.
 				try {
 					session.close();
 					break;

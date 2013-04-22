@@ -121,7 +121,7 @@ public class DesktopWorkspaceHandler extends AbstractDesktopHandler
 	 *  @playerversion AIR 1.1
 	 *  @productversion Flex 3
 	 */
-	protected function workspacesDataRecieved(e:IoMessageEvent):void
+	protected function workspacesDataReceived(e:IoMessageEvent):void
 	{
 		if (e.buffer && e.buffer.hasRemaining)
 		{
@@ -165,7 +165,7 @@ public class DesktopWorkspaceHandler extends AbstractDesktopHandler
 			buf.put(0x00); // load catalog enum oridnal.
 		};
 		info.addEventListener(IoMessageEvent.MESSAGE_SENT, writeFuture);
-		info.addEventListener(IoMessageEvent.MESSAGE_RECIEVED, workspacesDataRecieved);
+		info.addEventListener(IoMessageEvent.MESSAGE_RECEIVED, workspacesDataReceived);
 		client.listen(info);
 		client.send(info);
 

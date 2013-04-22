@@ -115,7 +115,7 @@ public class IoFilterChain {
     }
 
     public function fireMessageReceived(message:Object):void {
-        head.filter.messageRecieved(head.nextFilter, session, message);
+        head.filter.messageReceived(head.nextFilter, session, message);
     }
 
     public function fireMessageSent(message:Object):void {
@@ -335,7 +335,7 @@ class TailFilter extends IoFilter {
         nextFilter.filterWrite(session, message);
     }
 
-    override public function messageRecieved(nextFilter:NextFilter, session:IoSession, message:Object):void {
+    override public function messageReceived(nextFilter:NextFilter, session:IoSession, message:Object):void {
         const event:IoServiceEvent = new IoServiceEvent(IoServiceEvent.MESSAGE_RECEIVED,
                 session, message);
         session.handler.dispatchEvent(event);
@@ -496,9 +496,9 @@ class XNextFilter implements NextFilter {
         entry.filter.filterWrite(entry.nextFilter, session, message);
     }
 
-    public function messageRecieved(session:IoSession, message:Object):void {
+    public function messageReceived(session:IoSession, message:Object):void {
         var entry:IoFilterChainEntry = othis.nextEntry;
-        entry.filter.messageRecieved(entry.nextFilter, session, message);
+        entry.filter.messageReceived(entry.nextFilter, session, message);
     }
 
     public function messageSent(session:IoSession, message:Object):void {

@@ -60,7 +60,7 @@ public class LoginHandler
 
 	}
 
-	internal function messageRecieved(e:IoMessageEvent):void
+	internal function messageReceived(e:IoMessageEvent):void
 	{
 
 	}

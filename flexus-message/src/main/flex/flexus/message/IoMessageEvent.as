@@ -56,7 +56,7 @@ public class IoMessageEvent extends Event
 	 *  @playerversion AIR 1.1
 	 *  @productversion Flex 3
 	 */
-	static public const MESSAGE_RECIEVED:String = "messageRecieved";
+	static public const MESSAGE_RECEIVED:String = "messageReceived";
 
 	//----------------------------------
 	// READY 

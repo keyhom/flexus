@@ -36,7 +36,7 @@ public interface NextFilter {
 
     function filterWrite(session:IoSession, message:Object):void;
 
-    function messageRecieved(session:IoSession, message:Object):void;
+    function messageReceived(session:IoSession, message:Object):void;
 
     function messageSent(session:IoSession, message:Object):void;
 

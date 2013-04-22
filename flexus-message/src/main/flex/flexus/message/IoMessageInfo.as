@@ -12,16 +12,16 @@ import flash.events.IEventDispatcher;
 [Event(name = "resolved", type = "flexus.message.IoMessageEvent")]
 
 /**
- *  The event fired when the remote message was recieved and just
+ *  The event fired when the remote message was received and just
  *  ready to handle the message logic.
  */
 [Event(name = "ready", type = "flexus.message.IoMessageEvent")]
 
 /**
- *  The event fired when the remote message was recieved and just
+ *  The event fired when the remote message was received and just
  *  staring to decode the data.
  */
-[Event(name = "messageRecieved", type = "flexus.message.IoMessageEvent")]
+[Event(name = "messageReceived", type = "flexus.message.IoMessageEvent")]
 
 /**
  *  The event fired when the local message was sent and need to

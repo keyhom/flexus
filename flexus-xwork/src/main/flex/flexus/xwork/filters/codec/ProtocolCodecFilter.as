@@ -117,9 +117,9 @@ public class ProtocolCodecFilter extends IoFilter {
         }
     }
 
-    override public function messageRecieved(nextFilter:NextFilter, session:IoSession, message:Object):void {
+    override public function messageReceived(nextFilter:NextFilter, session:IoSession, message:Object):void {
         if (!(message is ByteBuffer)) {
-            nextFilter.messageRecieved(session, message);
+            nextFilter.messageReceived(session, message);
             return;
         }
 
@@ -372,7 +372,7 @@ class ProtocolDecoderOutputImpl extends ProtocolDecoderOutput {
 
     override public function flush(nextFilter:NextFilter, session:IoSession):void {
         while (!messageQueue.empty) {
-            nextFilter.messageRecieved(session, messageQueue.poll());
+            nextFilter.messageReceived(session, messageQueue.poll());
         }
     }
 }
