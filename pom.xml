@@ -39,15 +39,15 @@
     <!-- flex sdk properties -->
     <flex.sdk.version>4.5.0.20967</flex.sdk.version>
     <flex.sdk.groupId>com.adobe.flex.framework</flex.sdk.groupId>
-    <flex.sdk.scope>caching</flex.sdk.scope>
     <!-- flexus properties -->
     <flexus.groupId>org.pureart.flexus</flexus.groupId>
     <flexus.version>2.0-SNAPSHOT</flexus.version>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
-    <testSourceDirectory>src/test/flex</testSourceDirectory>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
 
     <plugins>
       <plugin>
@@ -104,23 +104,23 @@
   <dependencies>
     <dependency>
       <groupId>${flex.sdk.groupId}</groupId>
-      <artifactId>flex-framework</artifactId>
+      <artifactId>playerglobal</artifactId>
       <version>${flex.sdk.version}</version>
-      <type>pom</type>
-      <exclusions>
-        <exclusion>
-          <groupId>${flex.sdk.groupId}</groupId>
-          <artifactId>mobilecomponents</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>${flex.sdk.groupId}</groupId>
-          <artifactId>osmf</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>${flex.sdk.groupId}</groupId>
-          <artifactId>flex</artifactId>
-        </exclusion>
-      </exclusions>
+      <type>swc</type>
+      <classifier>10.2</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${flex.sdk.groupId}</groupId>
+      <artifactId>playerglobal</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>rb.swc</type>
+    </dependency>
+    <dependency>
+      <groupId>${flex.sdk.groupId}</groupId>
+      <artifactId>framework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flexunit</groupId>
@@ -163,6 +163,25 @@
         <type>swc</type>
         <artifactId>flexus-utils</artifactId>
       </dependency>
+
+      <dependency>
+        <groupId>${flex.sdk.groupId}</groupId>
+        <artifactId>mx</artifactId>
+        <version>${flex.sdk.version}</version>
+        <type>swc</type>
+      </dependency>
+      <dependency>
+        <groupId>${flex.sdk.groupId}</groupId>
+        <artifactId>core</artifactId>
+        <version>${flex.sdk.version}</version>
+        <type>swc</type>
+      </dependency>
+      <dependency>
+        <groupId>${flex.sdk.groupId}</groupId>
+        <artifactId>textLayout</artifactId>
+        <version>${flex.sdk.version}</version>
+        <type>swc</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -189,15 +208,6 @@
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>com.adobe.flex.framework</groupId>
-          <artifactId>playerglobal</artifactId>
-          <type>swc</type>
-          <version>4.5.0.20967</version>
-          <classifier>10.2</classifier>
-        </dependency>
-      </dependencies>
     </profile>
     <!-- For Library sources -->
     <profile>
@@ -224,11 +234,26 @@
   <!-- Modules -->
   <modules>
     <module>flexus-core</module>
-    <module>flexus-component</module>
+    <!--<module>flexus-component</module>-->
     <module>flexus-message</module>
     <module>flexus-utils</module>
-    <module>flexus-mvc</module>
+    <!--<module>flexus-mvc</module>-->
     <!--<module>flexus-tester</module>-->
     <module>flexus-xwork</module>
   </modules>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <layout>default</layout>
+      <name>Releases</name>
+      <url>http://nexus.fx:8081/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <layout>default</layout>
+      <name>Snapshots</name>
+      <url>http://nexus.fx:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

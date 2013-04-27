@@ -10,4 +10,13 @@
 	<artifactId>flexus-component</artifactId>
 	<packaging>swc</packaging>
 	<name>Flexus Component Library</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${flex.sdk.groupId}</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
 </project>
