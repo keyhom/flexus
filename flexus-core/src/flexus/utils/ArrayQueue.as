@@ -24,43 +24,68 @@
 package flexus.utils {
 
 /**
- * @author keyhom
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class ArrayQueue implements IQueue {
 
     /**
-     *  Creates an ArrayQueue instance.
+     * Creates an ArrayQueue instance.
      */
     public function ArrayQueue(capacity:Number = Number.NaN) {
         super();
     }
 
-    private var _queue:Array = new Array;
+    /**
+     * @private
+     */
+    private var _queue:Vector.<Object> = new Vector.<Object>;
 
+    /**
+     * @inheritDoc
+     */
     public function get empty():Boolean {
         return _queue.length == 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get size():uint {
         return _queue.length;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offer(o:Object):void {
         _queue.push(o);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function peek():Object {
         if (!empty)
             return _queue[0];
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function poll():Object {
         return _queue.shift();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function clear():void {
-        _queue = new Array;
+        // Remove all content.
+        _queue.splice(0, _queue.length);
+        // New instance assign to.
+        _queue = new Vector.<Object>;
     }
 }
 }
+// vim:ft=actionscript

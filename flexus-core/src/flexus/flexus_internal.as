@@ -21,28 +21,11 @@
  *     distribution.
  */
 
-package flexus.socket {
-
-import flexus.net.IpAddress;
+package flexus {
 
 /**
- * Represents a socket address.
- *
- * @version $Revision$
- * @author keyhom (keyhom.c@gmail.com)
+ * @private
  */
-public interface SocketAddress {
-
-    /**
-     * Provides the host as IpAddress.
-     */
-    function get host():IpAddress;
-
-    /**
-     * Provides the port as Number.
-     */
-    function get port():uint;
-
-}
+public namespace flexus_internal = "http://p.keyhom.org/flexus/";
 }
 // vim:ft=actionscript

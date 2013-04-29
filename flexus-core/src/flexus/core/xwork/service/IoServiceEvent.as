@@ -28,7 +28,10 @@ import flash.events.Event;
 import flexus.core.xwork.session.IoSession;
 
 /**
- * @author keyhom
+ * Represents an event of IoService.
+ *
+ * @version $Revision$
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class IoServiceEvent extends Event {
 
@@ -41,9 +44,14 @@ public class IoServiceEvent extends Event {
     static public const SESSION_CLOSED:String = "sessionClosed";
     static public const SESSION_CREATED:String = "sessionCreated";
     static public const SESSION_IDLED:String = "sessionIdled";
+    public static const SESSION_DESTORYED:String = "sessionDestroyed";
 
     /**
-     * Creates a IoServiceEvent instance.
+     * Creates an IoServiceEvent instance.
+     *
+     * @param type The event type.
+     * @param session The associated session.
+     * @param attachment The associated attachment object.
      */
     public function IoServiceEvent(type:String, session:IoSession = null, attachment:Object =
             null) {
@@ -52,7 +60,14 @@ public class IoServiceEvent extends Event {
         this.attachment = attachment;
     }
 
+    /**
+     * Provides an attachment object.
+     */
     public var attachment:Object;
+    /**
+     * Provides the associated session.
+     */
     public var session:IoSession;
 }
 }
+// vim:ft=actionscript

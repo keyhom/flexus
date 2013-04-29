@@ -24,16 +24,18 @@
 package flexus.core.xwork.session {
 
 import flash.errors.IOError;
+import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import flexus.core.xwork.filterChain.IoFilterChain;
 import flexus.core.xwork.future.FutureEvent;
 import flexus.core.xwork.service.IoConnector;
 import flexus.core.xwork.service.IoHandler;
+import flexus.flexus_internal;
 import flexus.io.ByteBuffer;
-import flexus.logging.ILogger;
 
 /**
  * @version $Revision$
@@ -46,10 +48,6 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
      */
     static private var SESSION_ID_GENERATOR:uint = 0;
 
-    public static function traceStatistics(log:ILogger):void {
-        log.debug("Not found the statistics information now.");
-    }
-
     /**
      * Creates an AbstractIoSession concrete instance.
      */
@@ -59,57 +57,94 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
 
         this._service = service;
         this._sessionId = ++SESSION_ID_GENERATOR;
+
+        this.addEventListener(Event.UNLOAD, unload);
     }
 
-    private var _attributes:Object = {};
+    /**
+     * @private
+     */
+    private var _attributes:Dictionary = new Dictionary();
 
+    /**
+     * @inheritDoc
+     */
     public function get connected():Boolean {
         // must to be implemented.
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get filterChain():IoFilterChain {
         // must to be implemented.
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get handler():IoHandler {
         if (service)
             return service.handler;
         return null;
     }
 
+    /**
+     * @private
+     */
     private var _service:IoConnector;
 
+    /**
+     * @inheritDoc
+     */
     public function get service():IoConnector {
         return _service;
     }
 
+    /**
+     * @private
+     */
     private var _sessionId:uint;
 
+    /**
+     * @inheritDoc
+     */
     public function get sessionId():uint {
         return _sessionId;
     }
 
+    /**
+     * @inheritDoc
+     */
     override public function toString():String {
         return "IoSession#" + sessionId;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function close(now:Boolean = false, closeFuture:Function = null):void {
         // must to be implemented.
-        try {
-            if (closeFuture != null)
-                closeFuture.call(null, new FutureEvent(FutureEvent.CLOSED, this));
-        }
-        finally {
-            service.remove(this);
-        }
+        if (closeFuture != null)
+            closeFuture.call(null, new FutureEvent(FutureEvent.CLOSED, this));
+
+        filterChain.fireFilterClose();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function containsAttribute(key:Object):Boolean {
         return key in _attributes;
     }
 
+    /**
+     * Flushes the supplied message object to send.
+     *
+     * @param message The message object.
+     */
     public function flush(message:Object):void {
         if (!message)
             throw new ArgumentError('message');
@@ -123,6 +158,9 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAttribute(key:Object, defaultValue:Object = null):Object {
         var o:Object = null;
 
@@ -136,8 +174,11 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
         return o;
     }
 
-    public function getAttributeKeys():Array {
-        var result:Array = [];
+    /**
+     * @inheritDoc
+     */
+    public function getAttributeKeys():Vector.<Object> {
+        const result:Vector.<Object> = new Vector.<Object>;
 
         for (var k:String in _attributes) {
             result.push(k);
@@ -145,6 +186,9 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
         return result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function removeAttribute(key:Object, defaultValue:Object = null):Object {
         var originObject:Object;
 
@@ -160,6 +204,9 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
         return originObject;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function replaceAttribute(key:Object, oldValue:Object, newValue:Object):Object {
         if (key && (key in _attributes)) {
             var obj:Object = _attributes[key];
@@ -172,18 +219,27 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setAttribute(key:Object, value:Object):Object {
         var originObject:Object = _attributes[key];
         _attributes[key] = value;
         return originObject;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setAttributeIfAbsent(key:Object, value:Object):Object {
         if (!(key in _attributes) || !_attributes[key])
             _attributes[key] = value;
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function write(message:Object, writeFuture:Function = null):void {
         if (!message)
             throw new ArgumentError('message');
@@ -212,11 +268,11 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
             buf.putString(message.toString());
         }
         else if (message is FileReference) {
-            // TODO: implemented by file stream.
+            ByteBuffer.wrap(FileReference(message).data);
         }
 
         // filtering the chain to write.
-        filterChain.fireFilterWirte(message);
+        filterChain.fireFilterWrite(message);
     }
 
     /**
@@ -228,6 +284,25 @@ public class AbstractIoSession extends EventDispatcher implements IoSession {
     protected function writeBuffer(buffer:ByteBuffer):uint {
         // must to be implemented.
         return 0;
+    }
+
+    /**
+     * @private
+     */
+    flexus_internal static function traceStatistics():void {
+        COMPILER::DEBUG {
+            trace("Not found the statistics information now.");
+        }
+    }
+
+    /**
+     * Unload this session instance.
+     */
+    protected function unload(e:Event):void {
+        removeEventListener(Event.UNLOAD, unload);
+
+        this._service = null;
+        this._attributes = null;
     }
 }
 }

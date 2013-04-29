@@ -23,23 +23,25 @@
 
 package flexus.socket {
 
+import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.Socket;
+import flash.utils.Dictionary;
 
 import flexus.core.xwork.future.FutureEvent;
 import flexus.core.xwork.service.IoConnector;
 import flexus.core.xwork.session.AbstractIoSession;
 import flexus.core.xwork.session.IoSession;
-import flexus.errors.IllegalStateError;
 import flexus.io.ByteBuffer;
 
 /**
  * A socket implementation of IoConnector.
  *
- * @author keyhom
+ * @version $Revision$
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class SocketConnector extends IoConnector {
 
@@ -50,87 +52,143 @@ public class SocketConnector extends IoConnector {
         super();
     }
 
+    /** @private */
+    private var _sessionBiMap:Dictionary;
+
+    /**
+     * @inheritDoc
+     */
     override protected function newSession(object:Object):IoSession {
-        var session:SocketSession = new SocketSession(this, Socket(object));
-        // construct the session map.
+        if (!(object is Socket))
+            return null;
+
+        const session:IoSession = new SocketSession(this, Socket(object));
+        // Construct the session map.
         super.newSession(session);
 
-        if (!(object in sessions))
-            sessions[object] = session;
+        if (!_sessionBiMap) {
+            _sessionBiMap = new Dictionary(true);
+        }
+
+        // Make an association from socket to sessionId.
+        if (!(object in _sessionBiMap))
+            _sessionBiMap[object] = session.sessionId;
 
         return session;
     }
 
-    override protected function connect0(address:SocketAddress, connectFuture:Function):void {
-        const socket:Socket = new Socket;
-        var func:Function = null;
-        socket.addEventListener(Event.CONNECT, func = function (e:Event):void {
-            // connected.
-            socket.removeEventListener(Event.CONNECT, func);
-            func = null;
+    /**
+     * @inheritDoc
+     */
+    override protected function connect0(host:String, port:uint, timeout:uint, callback:Function = null):void {
+        // Connected callback.
+        const func:Function = function (e:Event):void {
+            const s:Socket = e.currentTarget as Socket;
+            s.removeEventListener(Event.CONNECT, func);
 
-            var s:Socket = e.currentTarget as Socket;
             s.flush();
             s.addEventListener(ProgressEvent.SOCKET_DATA, processDataQueue);
             s.addEventListener(IOErrorEvent.IO_ERROR, errorCaught);
 
-            // new session construct.
-            var session:IoSession = newSession(s);
+            // Creates session.
+            const session:IoSession = newSession(s);
+            // Initializes session.
             initSession(AbstractIoSession(session));
 
-            if (connectFuture != null) {
-                var future:FutureEvent = new FutureEvent(FutureEvent.CONNECTED,
-                        session);
-                connectFuture.call(null, future);
+            // Called the callback if it's valid.
+            if (callback != null) {
+                callback.call(null, new FutureEvent(FutureEvent.CONNECTED, session));
             }
-        }, false, 0, true);
+        };
 
+        // Creates socket.
+        const socket:Socket = new Socket;
+
+        // General socket event listener.
+        socket.addEventListener(Event.CONNECT, func);
         socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorCaught);
         socket.addEventListener(Event.CLOSE, processClosed);
 
+        socket.timeout = timeout;
 
-        if (!address)
-            throw new IllegalStateError("Invalid remote address!");
-
-        socket.timeout = 15000;
-        socket.connect(address.host.toString(), address.port);
+        // Perform connecting.
+        socket.connect(host, port);
     }
 
+    /**
+     * @private
+     */
+    private function getSession(s:Socket):IoSession {
+        if (s && s in _sessionBiMap) {
+            const sessionId:int = int(_sessionBiMap[s]);
+            return sessions[sessionId];
+        }
+        return null;
+    }
+
+    /**
+     * @private
+     */
     private function processDataQueue(e:ProgressEvent):void {
         if (e && e.type == ProgressEvent.SOCKET_DATA) {
             const s:Socket = e.currentTarget as Socket;
+            const session:IoSession = getSession(s);
 
-            if (s && (s in sessions) && s.bytesAvailable) {
+            if (session && s.bytesAvailable) {
                 const buf:ByteBuffer = new ByteBuffer;
 
                 s.readBytes(buf.array);
 
                 if (buf.hasRemaining) {
-                    IoSession(sessions[s]).filterChain.fireMessageReceived(buf);
+                    session.filterChain.fireMessageReceived(buf);
                 }
             }
         }
-        // nothing to process.
     }
 
-    private function processClosed(e:Event):void {
-        if (e.target && (e.target is Socket)) {
-            var s:Socket = Socket(e.target);
+    /**
+     * @private
+     */
+    private function unloadSocket(s:Socket):void {
+        if (s) {
+            s.removeEventListener(ProgressEvent.SOCKET_DATA, processDataQueue);
+            s.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, errorCaught);
+            s.removeEventListener(IOErrorEvent.IO_ERROR, errorCaught);
+            s.removeEventListener(Event.CLOSE, processClosed);
+        }
+    }
 
-            if (s in sessions) {
-                var session:IoSession = IoSession(sessions[s]);
-                session.service.remove(session);
-                // Deletes the socket storage in sessions.
-                sessions[s] = null;
-                delete sessions[s];
+    /**
+     * @private
+     */
+    private function processClosed(e:Event):void {
+        if (e.currentTarget && (e.currentTarget is Socket)) {
+            const s:Socket = Socket(e.currentTarget);
+            const session:IoSession = getSession(s);
+
+            unloadSocket(s);
+
+            if (session) {
+                // Removes the socket association.
+                delete _sessionBiMap[s];
+
+                session.filterChain.fireFilterClose();
             }
         }
     }
 
-    private function errorCaught(e:Event):void {
-        logger.info("ERROR CAUGHT.");
-        throw new IllegalStateError("ERROR CAUGHT.");
+    /**
+     * @private
+     */
+    private function errorCaught(e:ErrorEvent):void {
+        if (e.target && e.target is Socket) {
+            const session:IoSession = getSession(Socket(e.target));
+            if (session) {
+                session.filterChain.exceptionCaught(new Error(e.text, e.errorID));
+            }
+        }
     }
 
 }
 }
+// vim:ft=actionscript

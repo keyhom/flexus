@@ -92,25 +92,14 @@ public class IoFilterChain {
     }
 
     public function exceptionCaught(exception:Error):void {
-//		var future:ConnectFuture = session.removeAttribute(SESSION_CREATE_FUTURE) as
-//			ConnectFuture;
-//
-//		if (future == null)
-//		{
         head.filter.exceptionCaught(head.nextFilter, session, exception);
-//		}
-//		else
-//		{
-//			session.close(true);
-//			future.exception = exception;
-//		}
     }
 
     public function fireFilterClose():void {
         tail.filter.filterClose(tail.nextFilter, session);
     }
 
-    public function fireFilterWirte(message:Object):void {
+    public function fireFilterWrite(message:Object):void {
         tail.filter.filterWrite(tail.nextFilter, session, message);
     }
 
@@ -119,14 +108,6 @@ public class IoFilterChain {
     }
 
     public function fireMessageSent(message:Object):void {
-        try {
-            //				request.future.setWritten();
-        }
-        catch (e:Error) {
-            exceptionCaught(e);
-        }
-
-//		if (!message.encoded)
         head.filter.messageSent(head.nextFilter, session, message);
     }
 
@@ -300,7 +281,7 @@ import flexus.io.ByteBuffer;
 class HeadFilter extends IoFilter {
 
     override public function filterClose(nextFilter:NextFilter, session:IoSession):void {
-        // nothing to be done.
+        session.service.remove(session);
     }
 
     override public function filterWrite(nextFilter:NextFilter, session:IoSession, message:Object):void {
@@ -416,7 +397,7 @@ class EntryImpl implements IoFilterChainEntry {
     }
 
     public function set name(value:String):void {
-        this._name = name;
+        this._name = value;
     }
 
     private var _nextEntry:EntryImpl;
@@ -450,7 +431,6 @@ class EntryImpl implements IoFilterChainEntry {
     }
 
     private var othis:IoFilterChain;
-
 
     public function addAfter(name:String, filter:IoFilter):void {
         othis.addAfter(this.name, name, filter);

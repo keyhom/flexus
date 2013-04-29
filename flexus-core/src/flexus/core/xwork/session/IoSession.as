@@ -56,7 +56,7 @@ public interface IoSession extends IEventDispatcher {
 
     function getAttribute(key:Object, defaultValue:Object = null):Object;
 
-    function getAttributeKeys():Array;
+    function getAttributeKeys():Vector.<Object>;
 
     function removeAttribute(key:Object, value:Object = null):Object;
 

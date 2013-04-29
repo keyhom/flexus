@@ -33,7 +33,7 @@ public class WeakReference {
     /**
      * @private
      */
-    private const context:Dictionary = new Dictionary;
+    private const context:Dictionary = new Dictionary(true);
 
     /**
      * Creates a WeakReference instance.

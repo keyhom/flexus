@@ -29,12 +29,16 @@ import flexus.utils.StringUtil;
 /**
  * Represents the socket address for Internet.
  *
- * @author keyhom
+ * @version $Revision$
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class InetSocketAddress implements SocketAddress {
 
     /**
      * Creates an InetSocketAddress instance.
+     *
+     * @param host The value of host.
+     * @param port The value of port.
      */
     public function InetSocketAddress(host:*, port:Number = 80) {
         if (host is String) {
@@ -49,18 +53,29 @@ public class InetSocketAddress implements SocketAddress {
         this._port = port;
     }
 
+    /** @private */
     private var _host:IpAddress;
 
+    /**
+     * @inheritDoc
+     */
     public function get host():IpAddress {
         return _host;
     }
 
+    /** @private */
     private var _port:Number;
 
+    /**
+     * @inheritDoc
+     */
     public function get port():uint {
         return _port;
     }
 
+    /**
+     * @private
+     */
     public function toString():String {
         return host.toString() + ':' + port;
     }

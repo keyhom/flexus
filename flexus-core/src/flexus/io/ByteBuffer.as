@@ -29,7 +29,8 @@ import flash.utils.Endian;
 /**
  * The abstract buffer with byte array.
  *
- * @author keyhom
+ * @version $Revision$
+ * @author keyhom (keyhom.@gmail.com)
  */
 public class ByteBuffer {
 
@@ -43,9 +44,8 @@ public class ByteBuffer {
         if (bytes) {
             var s:String = '';
 
-            var pos:uint = bytes.position;
-
-            var len:uint = Math.min(bytes.length, limit);
+            const pos:uint = bytes.position;
+            const len:uint = Math.min(bytes.length, limit);
 
             for (var i:int = 0; i < len; i++) {
                 var b:int = bytes.readByte();
@@ -389,27 +389,27 @@ public class ByteBuffer {
         return this;
     }
 
-    public function put(byte:*):void {
-        if (byte is Number)
-            array.writeByte(byte);
-        else if (byte is ByteArray)
-            array.writeBytes(byte, 0, byte.length);
-        else if (byte is Boolean)
-            array.writeBoolean(byte);
-        else if (byte is String)
-            array.writeUTFBytes(byte);
-        else if (byte is ByteBuffer) {
-            const b:ByteBuffer = ByteBuffer(byte);
-            array.writeBytes(b.getBytes(b.remaining));
+    public function put(b:*):void {
+        if (b is Number)
+            array.writeByte(b);
+        else if (b is ByteArray)
+            array.writeBytes(b, 0, b.length);
+        else if (b is Boolean)
+            array.writeBoolean(b);
+        else if (b is String)
+            array.writeUTFBytes(b);
+        else if (b is ByteBuffer) {
+            const bb:ByteBuffer = ByteBuffer(b);
+            array.writeBytes(bb.getBytes(bb.remaining));
         }
-        else if (byte is Object)
-            array.writeObject(byte);
+        else if (b is Object)
+            array.writeObject(b);
     }
 
-    public function putAt(pos:uint, byte:*):void {
+    public function putAt(pos:uint, b:*):void {
         var p:uint = position;
         position = pos;
-        put(byte);
+        put(b);
         position = p;
     }
 
@@ -454,13 +454,13 @@ public class ByteBuffer {
 
     public function putPrefixString(value:String, prefixLength:uint = 2, charset:String =
             'utf-8'):void {
-        var b:ByteArray = new ByteArray;
+        const b:ByteArray = new ByteArray;
         b.endian = array.endian;
 
         if (value)
             b.writeUTFBytes(value);
 
-        var count:uint = b.length;
+        const count:uint = b.length;
 
         switch (prefixLength) {
             case 1:
@@ -486,14 +486,14 @@ public class ByteBuffer {
         position = p;
     }
 
-    public function putShort(short:int):void {
-        array.writeShort(short);
+    public function putShort(value:int):void {
+        array.writeShort(value);
     }
 
-    public function putShortAt(pos:uint, short:int):void {
+    public function putShortAt(pos:uint, value:int):void {
         var p:uint = position;
         position = pos;
-        putShort(short);
+        putShort(value);
         position = p;
     }
 
@@ -552,4 +552,4 @@ public class ByteBuffer {
     }
 }
 }
-
+// vim:ft=actionscript

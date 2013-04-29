@@ -23,6 +23,7 @@
 
 package flexus.socket {
 
+import flash.events.Event;
 import flash.net.Socket;
 
 import flexus.core.xwork.filterChain.IoFilterChain;
@@ -33,7 +34,8 @@ import flexus.io.ByteBuffer;
 /**
  * A socket implementation of IoSession.
  *
- * @author keyhom
+ * @version $Revision$
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class SocketSession extends AbstractIoSession {
 
@@ -49,22 +51,36 @@ public class SocketSession extends AbstractIoSession {
         this._filterChain = new IoFilterChain(this);
     }
 
+    /**
+     * @inheritDoc
+     */
     override public function get connected():Boolean {
         return socket.connected;
     }
 
+    /** @private */
     private var _filterChain:IoFilterChain;
 
+    /**
+     * @inheritDoc
+     */
     override public function get filterChain():IoFilterChain {
         return _filterChain;
     }
 
+    /** @private */
     private var _socket:Socket;
 
+    /**
+     * The Socket associated with this session.
+     */
     protected function get socket():Socket {
         return _socket;
     }
 
+    /**
+     * @inheritDoc
+     */
     override protected function writeBuffer(buffer:ByteBuffer):uint {
         if (buffer.hasRemaining) {
             socket.writeBytes(buffer.array);
@@ -74,14 +90,27 @@ public class SocketSession extends AbstractIoSession {
         return 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     override public function close(now:Boolean = false, closeFuture:Function =
             null):void {
         if (socket) {
-            if (socket.connected)
-                socket.close();
+            socket.close();
         }
 
-        super.close(false, closeFuture);
+        super.close(now, closeFuture);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    override protected function unload(e:Event):void {
+        super.unload(e);
+
+        this._filterChain = null;
+        this._socket = null;
     }
 }
 }
+// vim:ft=actionscript

@@ -26,23 +26,37 @@ package flexus.net {
 import flash.utils.ByteArray;
 
 /**
- * @author keyhom
+ * @version $Revision$
+ * @author keyhom (keyhom.c@gmail.com)
  */
 public class IpAddress {
 
-    static public const IP_REGEXP:RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    /** @private */
+    private static const IP_REGEXP:RegExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
 
-    static public function bytes2IpStr(value:ByteArray):String {
+    /**
+     * Converts the supplied ip <code>value</code> from ByteArray to String.
+     *
+     * @param value IP bytes.
+     * @return IP string.
+     */
+    public static function bytes2IpStr(value:ByteArray):String {
         var str:String = '';
         str += value.readUnsignedByte() + '.';
         str += value.readUnsignedByte() + '.';
         str += value.readUnsignedByte() + '.';
         str += value.readUnsignedByte();
-        value.position = 0;
+        value.position -= 4;
         return str;
     }
 
-    static public function bytes2Long(value:ByteArray):Number {
+    /**
+     * Converts the supplied IP <code>value</code> from ByteArray to Number.
+     *
+     * @param value IP bytes.
+     * @return IP long value.
+     */
+    public static function bytes2Long(value:ByteArray):Number {
         if (value && value.length >= 4) {
             var num:Number = 0;
             value.position = 3;
@@ -60,12 +74,14 @@ public class IpAddress {
         return 0;
     }
 
-    static public function isValid(value:String):Boolean {
-        return IP_REGEXP.test(value);
-    }
-
-    static public function long2Bytes(value:Number):ByteArray {
-        var b:ByteArray = new ByteArray;
+    /**
+     * Converts the supplied IP <code>value</code> from Number to ByteArray.
+     *
+     * @param value IP long value.
+     * @return IP bytes.
+     */
+    public static function long2Bytes(value:Number):ByteArray {
+        const b:ByteArray = new ByteArray;
         b.length = 4;
         b.position = 3;
         b.writeByte((value & 0xFF));
@@ -78,8 +94,14 @@ public class IpAddress {
         return b;
     }
 
-    static public function toBytes(value:String):ByteArray {
-        var b:ByteArray = new ByteArray;
+    /**
+     * Converts the supplied IP <code>value</code> from String to ByteArray.
+     *
+     * @param value IP string.
+     * @return IP bytes.
+     */
+    public static function toBytes(value:String):ByteArray {
+        const b:ByteArray = new ByteArray;
 
         if (isValid(value)) {
             var matches:Array = value.match(IP_REGEXP);
@@ -96,7 +118,19 @@ public class IpAddress {
     }
 
     /**
+     * Determines if the  supplied <code>value</code> was a valid IP string.
+     *
+     * @param value IP string.
+     * @return True if the IP string was valid, false otherwise.
+     */
+    public static function isValid(value:String):Boolean {
+        return IP_REGEXP.test(value);
+    }
+
+    /**
      * Creates an IpAddress instance.
+     *
+     * @param value The value of IP, can be any of string, bytes, long.
      */
     public function IpAddress(value:* = null) {
         if (value is String)
@@ -111,6 +145,7 @@ public class IpAddress {
         _bytes.length = 4;
     }
 
+    /** @private */
     private var _bytes:ByteArray;
 
     /**
@@ -122,12 +157,22 @@ public class IpAddress {
         return _bytes;
     }
 
+    /**
+     * Converts this IP to a number.
+     *
+     * @return The value of Number.
+     */
     public function toNumber():Number {
         return bytes2Long(bytes);
     }
 
+    /**
+     * @private
+     */
     public function toString():String {
         return bytes2IpStr(bytes);
     }
+
 }
 }
+// vim:ft=actionscript
